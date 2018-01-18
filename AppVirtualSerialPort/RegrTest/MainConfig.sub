@@ -1,0 +1,24 @@
+//===============================================================================
+//===============================================================================
+
+CONST cDEFDEVNAME               "LAIRD BL652"
+CONST cLoginMagicCommand        "@command_mode@\r"
+CONST cVer                      "VSP Version 1.22"
+CONST cUuuidBase                "569a1101b87f490c92cb11ba5ea5167c"
+CONST cLoginPswrd               "@command_mode@"
+CONST cATI0                     "10\090\09BL652"
+
+//CONST cVerx                     "[cVer]\nUpdated 24/Feb/2017 on BL652 (28.6.1.2)"
+
+//-------------------------------------------------------------------------------
+CONST cBreakOffTime             "1500"
+CONST cBreakOnTime              "500"
+CONST cBreakPostDelay           "750"
+CONST cOK                       "OK\r\n>"
+CONST cERs                      "ER 0000"
+CONST cERf                      "\r\n>"
+CONST cPortCloseDelay           "2000"
+CONST cQUOTE                    "\22"
+CONST cPostResetDelay           "2000"
+
+
