@@ -386,9 +386,9 @@
     #define DevNameFormatConfigMin   0
     #define DevNameFormatConfigMax   7
 //1:TX Power in dBm
-#define TxPowerConfigDef         4      //1
+#define TxPowerConfigDef         8      //1
     #define TxPowerConfigMin         -20
-    #define TxPowerConfigMax         4
+    #define TxPowerConfigMax         8
 //2:Disconnect time (if device does not encrypt connection - VSP flag must be set to encrypted) in ms
 #define EncrDisconToutConfigDef  8000      //2
     #define EncrDisconToutConfigMin  1000
