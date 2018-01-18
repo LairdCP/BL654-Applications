@@ -1,0 +1,150 @@
+// Copyright (c) 2013, Laird
+//
+// Permission to use, copy, modify, and/or distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+// ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+// IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+//
+// SPDX-License-Identifier:ISC
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++                                                                      ++
+// +++++  When UwTerminal downloads the app it will store it as a filenname   ++
+// +++++  which consists of all characters up to the first . and excluding it ++
+// +++++                                                                      ++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Simple program that reads the supply volts in mV and prints it to the UART
+// and will then wait for BLE_EVBLEMSGID_POWER_FAILURE_WARNING event
+//
+// 02/03/2013
+//
+//******************************************************************************
+
+
+//******************************************************************************
+// Definitions
+//******************************************************************************
+
+        //Set this to 0 to disable all debugging messages
+#define ENABLE_DEBUG_PRINTS                  1
+
+#define BLE_EVBLEMSGID_POWER_FAILURE_WARNING                19  //msgCtx = current supply voltage
+
+//==============================================================================
+//==============================================================================
+sub AssertRC(byval rc as integer,byval tag as integer)
+  if (ENABLE_DEBUG_PRINTS!=0) && (rc!=0) then
+    print "Failed with ";integer.h' rc;" at tag ";tag;"\n"
+  endif
+endsub
+
+//==============================================================================
+//==============================================================================
+sub DbgMsg(byval msg$ as string)
+  if (ENABLE_DEBUG_PRINTS!=0) then
+    print msg$;"\n"
+  endif
+endsub
+
+//==============================================================================
+//==============================================================================
+sub DbgMsgVal(byval msg$ as string, byval vl as integer)
+  if (ENABLE_DEBUG_PRINTS!=0) then
+    print msg$;" ";vl;"\n"
+  endif
+endsub
+
+//==============================================================================
+//==============================================================================
+sub DbgPrnAdvReport(byref rp$ as string)
+  if (ENABLE_DEBUG_PRINTS!=0) then
+    print "Rpt=";strhexize$(rp$);"\n"
+  endif
+endsub
+
+//******************************************************************************
+// Global Variable Declarations
+//******************************************************************************
+
+dim rc
+dim mv
+dim lastmv
+dim count
+
+count = 0
+lastmv = -1
+
+//******************************************************************************
+// Function and Subroutine definitions
+//******************************************************************************
+
+//******************************************************************************
+// Handler definitions
+//******************************************************************************
+
+//==============================================================================
+// This handler is called when TIMER 0 expires
+//==============================================================================
+function HandlerTimer0() as integer
+  mv=ReadPwrSupplyMv()
+  if lastmv != mv then
+    print "\n --- Supply voltage is ";mv;"mV"
+    lastmv = mv
+  endif
+endfunc 1
+
+//==============================================================================
+// This handler is called when there is a BLE message
+//==============================================================================
+function HandlerBleMsg(BYVAL nMsgId AS INTEGER, BYVAL nCtx AS INTEGER) as integer
+
+  select nMsgId
+
+  case BLE_EVBLEMSGID_POWER_FAILURE_WARNING
+    DbgMsgVal("\n --- Power Fail Warning ",nCtx)
+    mv=ReadPwrSupplyMv()
+    print "\n --- Supply voltage is ";mv;"mV"
+    count = count + 1
+    print "\n --- count is ";count
+    if count > 3 then
+      exitfunc 0
+    endif
+
+  case else
+    DbgMsgVal("Unknown Ble Msg", nMsgId)
+  endselect
+endfunc 1
+
+
+//******************************************************************************
+// Equivalent to main() in C
+//******************************************************************************
+
+OnEvent  EVBLEMSG           call HandlerBleMsg
+OnEvent  EVTMR0             call HandlerTimer0
+
+mv=ReadPwrSupplyMv()
+print "\n\nSupply voltage is ";mv;"mV\n"
+
+mv=2700
+rc=SetPwrSupplyThreshMv(mv)
+AssertRC(rc, 313)
+
+print "\nWaiting for power supply to fall below ";mv;"mV"
+
+//Poll sensor on a timer
+TimerStart(0,500,1)
+
+//------------------------------------------------------------------------------
+// Wait for a synchronous event.
+// An application can have multiple <WaitEvent> statements
+//------------------------------------------------------------------------------
+waitevent

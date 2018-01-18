@@ -1,0 +1,163 @@
+// Copyright (c) 2016, Laird
+//
+// Permission to use, copy, modify, and/or distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+// ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+// IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+//
+// SPDX-License-Identifier:ISC
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++                                                                      ++
+// +++++  When UwTerminal downloads the app it will store it as a filenname   ++
+// +++++  which consists of all characters up to the first . and excluding it ++
+// +++++                                                                      ++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+//
+// Simple development board button and LED test
+// Tests the functionality of buttons 1-4 and LEDs 1-4 on the BL654 devkit
+//
+//******************************************************************************
+
+//******************************************************************************
+// Definitions
+//******************************************************************************
+#define GPIO_BTN1               11
+#define GPIO_BTN2               12
+#define GPIO_BTN3               24
+#define GPIO_BTN4               25
+#define GPIO_LED1               13
+#define GPIO_LED2               14
+#define GPIO_LED3               15
+#define GPIO_LED4               16
+
+//******************************************************************************
+// Global Variable Declarations
+//******************************************************************************
+dim rc                          //Declare rc as integer variable
+
+//******************************************************************************
+// Function and Subroutine definitions
+//******************************************************************************
+
+//==============================================================================
+//==============================================================================
+sub AssertRC(byval rc as integer,byval tag as integer)
+  if (rc!=0) then
+    print "Failed with ";integer.h' rc;" at tag ";tag;"\n"
+  endif
+endsub
+
+//******************************************************************************
+// Handler definitions
+//******************************************************************************
+function handlerbutton1()
+    dim i : i = GpioRead(GPIO_BTN1)
+
+    //If button 1 was pressed
+    if i==0 then
+        GpioWrite(GPIO_LED1,1)                         //Turns LED 1 on
+        print "\nButton 1 Pressed  : LED 1 ON"
+    //If button 1 was released
+    elseif i==1 then
+        GpioWrite(GPIO_LED1,0)                         //Turns LED 1 off
+        print "\nButton 1 Released : LED 1 OFF"
+    endif
+endfunc 1
+
+function handlerbutton2()
+    dim i : i = GpioRead(GPIO_BTN2)
+
+    //If button 2 was pressed
+    if i==0 then
+        GpioWrite(GPIO_LED2,1)                         //Turns LED 2 on
+        print "\nButton 2 Pressed  : LED 2 ON"
+    //If button 2 was released
+    elseif i==1 then
+        GpioWrite(GPIO_LED2,0)                         //Turns LED 2 off
+        print "\nButton 2 Released : LED 2 OFF"
+    endif
+endfunc 1
+
+function handlerbutton3()
+    dim i : i = GpioRead(GPIO_BTN3)
+
+    //If button 3 was pressed
+    if i==0 then
+        GpioWrite(GPIO_LED3,1)                         //Turns LED 3 on
+        print "\nButton 3 Pressed  : LED 3 ON"
+    //If button 3 was released
+    elseif i==1 then
+        GpioWrite(GPIO_LED3,0)                         //Turns LED 3 off
+        print "\nButton 3 Released : LED 3 OFF"
+    endif
+endfunc 1
+
+function handlerbutton4()
+    dim i : i = GpioRead(GPIO_BTN4)
+
+    //If button 4 was pressed
+    if i==0 then
+        GpioWrite(GPIO_LED4,1)                         //Turns LED 4 on
+        print "\nButton 4 Pressed  : LED 4 ON"
+    //If button 4 was released
+    elseif i==1 then
+        GpioWrite(GPIO_LED4,0)                         //Turns LED 4 off
+        print "\nButton 4 Released : LED 4 OFF"
+    endif
+endfunc 1
+
+//******************************************************************************
+// Equivalent to main() in C
+//******************************************************************************
+rc = gpiosetfunc(GPIO_BTN1,1,2)                //Sets Button 1 SIO as a digital in with a weak pull up resistor
+AssertRC(rc, 122)
+rc = gpiosetfunc(GPIO_BTN2,1,2)                //Sets Button 2 SIO as a digital in with a weak pull up resistor
+AssertRC(rc, 124)
+rc = gpiosetfunc(GPIO_BTN3,1,2)                //Sets Button 3 SIO as a digital in with a weak pull up resistor
+AssertRC(rc, 126)
+rc = gpiosetfunc(GPIO_BTN4,1,2)                //Sets Button 4 SIO as a digital in with a weak pull up resistor
+AssertRC(rc, 128)
+rc = gpiosetfunc(GPIO_LED1,2,0)                //Sets LED1 SIO as a digital out
+AssertRC(rc, 130)
+rc = gpiosetfunc(GPIO_LED2,2,0)                //Sets LED2 SIO as a digital out
+AssertRC(rc, 132)
+rc = gpiosetfunc(GPIO_LED3,2,0)                //Sets LED2 SIO as a digital out
+AssertRC(rc, 134)
+rc = gpiosetfunc(GPIO_LED4,2,0)                //Sets LED2 SIO as a digital out
+AssertRC(rc, 136)
+rc = gpiobindevent(0,GPIO_BTN1,2)              //Binds a gpio transition high or low to an event for button 1
+AssertRC(rc, 138)
+rc = gpiobindevent(1,GPIO_BTN2,2)              //Binds a gpio transition high or low to an event for button 2
+AssertRC(rc, 140)
+rc = gpiobindevent(2,GPIO_BTN3,2)              //Binds a gpio transition high or low to an event for button 3
+AssertRC(rc, 142)
+rc = gpiobindevent(3,GPIO_BTN4,2)              //Binds a gpio transition high or low to an event for button 4
+AssertRC(rc, 144)
+
+onevent evgpiochan0 call handlerbutton1        //Detects when button 1 is pressed or released and calls the function
+onevent evgpiochan1 call handlerbutton2        //Detects when button 2 is pressed or released and calls the function
+onevent evgpiochan2 call handlerbutton3        //Detects when button 3 is pressed or released and calls the function
+onevent evgpiochan3 call handlerbutton4        //Detects when button 4 is pressed or released and calls the function
+
+//Print devkit config info
+print "\nEnsure that jumpers are placed on J26, J37, J39 and J45."
+
+print "\n\n"
+
+print "Ready to begin button and LED test \n"        //These lines are printed to the UART when the program is run
+print "Please press button 1, button 2, button 3 or button 4\n\n"
+
+//------------------------------------------------------------------------------
+// Wait for a synchronous event.
+// An application can have multiple <WaitEvent> statements
+//------------------------------------------------------------------------------
+waitevent                       //When program is run it waits here until an event is detected
