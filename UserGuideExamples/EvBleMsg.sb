@@ -1,0 +1,48 @@
+//Example :: EvBleMsg.sb
+DIM addr$ : addr$=""
+DIM rc
+
+//==============================================================================
+// This handler is called when there is a BLE message
+//==============================================================================
+FUNCTION HndlrBleMsg(BYVAL nMsgId AS INTEGER, BYVAL nCtx AS INTEGER) 
+    SELECT nMsgId
+        CASE 0
+            PRINT "\nBLE Connection ";nCtx
+        CASE 1
+            PRINT "\nDisconnected ";nCtx;"\n"
+        CASE 18
+            PRINT "\nConnection ";nCtx;" is now encrypted"
+        CASE 16
+            PRINT "\nConnected to a bonded master"
+        CASE 17
+            PRINT "\nA new pairing has replaced the old key";   
+        CASE ELSE
+            PRINT "\nUnknown Ble Msg"
+    ENDSELECT
+ENDFUNC 1
+
+FUNCTION HndlrBlrAdvTimOut() 
+   PRINT "\nAdvert stopped via timeout"
+   PRINT "\nExiting..."
+ENDFUNC 0
+
+FUNCTION HndlrUartRx()   
+    rc=BleAdvertStop()
+    PRINT "\nExiting..."
+ENDFUNC 0
+
+
+ONEVENT  EVBLEMSG           CALL HndlrBleMsg
+ONEVENT  EVBLE_ADV_TIMEOUT  CALL HndlrBlrAdvTimOut
+ONEVENT  EVUARTRX           CALL HndlrUartRx
+
+//Start adverts
+IF BleAdvertStart(0,addr$,100,10000,0)==0 THEN
+    PRINT "\nAdverts Started"
+    PRINT "\nPress any key to exit\n"
+ELSE
+    PRINT "\n\nAdvertisement not successful"
+ENDIF
+
+WAITEVENT
