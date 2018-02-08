@@ -5,7 +5,9 @@ A repository for smartBASIC applications that run on the Laird BL654 (Released u
 
 BL654 Overview
 ------------
-Laird’s BL654 contains the latest generation silicon with Bluetooth Low Energy v5 capabilities and groundbreaking ultra-low power performance. Building on the expertise of the BL600 and BL652 Series, the BL654’s class-leading Nordic nRF52840 silicon, optimized low power schemes and smartBASIC programming language provide a secure, stable, hostless Bluetooth environment. The BL654 introduces Bluetooth v5, bringing long range connectivity, industrial security and feature expansion to Laird’s proven Bluetooth Low Energy modules. Let Laird’s innovative BL654 series and decades of expertise in Bluetooth module design speed your product to market. For more information, visit the [`BL654 product page`](https://www.lairdtech.com/products/bl654-ble-module).
+Laird’s BL654 contains the latest generation silicon with Bluetooth Low Energy v5 capabilities and groundbreaking ultra-low power performance. Building on the expertise of the BL600 and BL652 Series, the BL654’s class-leading Nordic nRF52840 silicon, optimized low power schemes and smartBASIC programming language provide a secure, stable, hostless Bluetooth environment. The BL654 introduces Bluetooth v5, bringing long range connectivity, industrial security and feature expansion to Laird’s proven Bluetooth Low Energy modules. Let Laird’s innovative BL654 series and decades of expertise in Bluetooth module design speed your product to market.
+
+**Note:** (February 2017) - Only engineering samples of the BL654 series are available, documentation and additional example/sample code will be added in the future.
 
 UwTerminalX
 -----------
@@ -13,7 +15,7 @@ UwTerminalX is a cross-platform utility for communicating and downloading applic
 
 BL654 Quick Start Demonstration
 -------------------------------
-Get started in minutes with the [`DVK-BL654 Quick Start`](https://www.lairdtech.com/bl654-quick-start) Guide!
+The BL654 quick start documentation will be available soon.
 
 Older firmwares
 -------------------------------
