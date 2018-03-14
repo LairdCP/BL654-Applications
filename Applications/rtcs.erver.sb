@@ -236,6 +236,24 @@ FUNCTION HndlrCharVal(BYVAL charHandle, BYVAL offset, BYVAL len)
     ENDIF
 ENDFUNC 1
 
+//==============================================================================
+// This handler is called when the BLE PHY is changed
+//==============================================================================
+function  HandlerPhyChngd(BYVAL hConn, BYVAL nStatus, BYVAL PhyTx, BYVAL PhyRx)
+    //print "BLE PHY CHANGED: \n"
+    //print "Handle: ";integer.h' hConn;"\n"
+    //print "Status: ";integer.h' nStatus;"\n"
+    //print "PhyTx=";PhyTx;" PhyRx =";PhyRx;"\n"
+endfunc 1
+
+//==============================================================================
+// This handler is called when there is a requiest for PHY change
+//==============================================================================
+function  HandlerPhyReq(BYVAL hConn, BYVAL PhyTx, BYVAL PhyRx)
+    // Accept incoming PHY request by default
+    rc = BlePhySet(hConn, PhyTx, PhyRx, 0)
+endfunc 1
+
 //Open I2C
 rc = I2COpen(I2CSpeed, 0, I2Ch)
 IF (rc != 0) THEN
@@ -348,9 +366,11 @@ BTAddr$ = SysInfo$(4)
 PRINT "\nrtcs.erver running with Bluetooth address: ";STRHEXIZE$(BTAddr$);"\nNow accepting connections...\n\n"
 
 //Events
-ONEVENT EVTMR0 CALL HndlrTmr0          //Runs when timer0 expires
-ONEVENT EVBLEMSG CALL BleEvent         //Runs on BLE event
-ONEVENT EVCHARCCCD CALL HndlrCharCccd  //Runs when CCCD is written
-ONEVENT EVCHARVAL CALL HndlrCharVal    //Runs when characteristic is written
+ONEVENT EVTMR0             CALL HndlrTmr0         //Runs when timer0 expires
+ONEVENT EVBLEMSG           CALL BleEvent          //Runs on BLE event
+ONEVENT EVCHARCCCD         CALL HndlrCharCccd     //Runs when CCCD is written
+ONEVENT EVCHARVAL          CALL HndlrCharVal      //Runs when characteristic is written
+ONEVENT EVBLE_PHY_UPDATED  CALL HandlerPhyChngd   //PHY changed
+ONEVENT EVBLE_PHY_REQUEST  CALL HandlerPhyReq     //PHY change request
 
 WAITEVENT

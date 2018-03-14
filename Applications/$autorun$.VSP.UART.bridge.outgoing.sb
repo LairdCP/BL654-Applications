@@ -991,6 +991,24 @@ sub Initialise()
   rc = BleSecMngrBondReq(1)
 endsub
 
+//==============================================================================
+// This handler is called when the BLE PHY is changed
+//==============================================================================
+function  HandlerPhyChngd(BYVAL hConn, BYVAL nStatus, BYVAL PhyTx, BYVAL PhyRx)
+    //print "BLE PHY CHANGED: \n"
+    //print "Handle: ";integer.h' hConn;"\n"
+    //print "Status: ";integer.h' nStatus;"\n"
+    //print "PhyTx=";PhyTx;" PhyRx =";PhyRx;"\n"
+endfunc 1
+
+//==============================================================================
+// This handler is called when there is a requiest for PHY change
+//==============================================================================
+function  HandlerPhyReq(BYVAL hConn, BYVAL PhyTx, BYVAL PhyRx)
+    // Accept incoming PHY request by default
+    rc = BlePhySet(hConn, PhyTx, PhyRx, 0)
+endfunc 1
+
 //******************************************************************************
 // Equivalent to main() in C
 //******************************************************************************
@@ -1028,6 +1046,8 @@ OnEvent EVBLE_SCAN_TIMEOUT CALL HndlrScanTO
 OnEvent EVBLE_ADV_REPORT   CALL HndlrScanResp
 OnEvent EVMSGAPP           CALL SetMode
 OnEvent EVTMR0             CALL _disconnect
+ONEVENT EVBLE_PHY_UPDATED  CALL HandlerPhyChngd   //PHY changed
+ONEVENT EVBLE_PHY_REQUEST  CALL HandlerPhyReq     //PHY change request
 
 //------------------------------------------------------------------------------
 // Wait for a synchronous event.

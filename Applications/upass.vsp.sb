@@ -1041,6 +1041,25 @@ function HandlerBlrAdvTimOut() as integer
 
 endfunc 1
 
+//==============================================================================
+// This handler is called when the BLE PHY is changed
+//==============================================================================
+function  HandlerPhyChngd(BYVAL hConn, BYVAL nStatus, BYVAL PhyTx, BYVAL PhyRx)
+    //print "BLE PHY CHANGED: \n"
+    //print "Handle: ";integer.h' hConn;"\n"
+    //print "Status: ";integer.h' nStatus;"\n"
+    //print "PhyTx=";PhyTx;" PhyRx =";PhyRx;"\n"
+endfunc 1
+
+//==============================================================================
+// This handler is called when there is a requiest for PHY change
+//==============================================================================
+function  HandlerPhyReq(BYVAL hConn, BYVAL PhyTx, BYVAL PhyRx)
+    // Accept incoming PHY request by default
+    dim rc
+    rc = BlePhySet(hConn, PhyTx, PhyRx, 0)
+endfunc 1
+
 //******************************************************************************
 // Equivalent to main() in C
 //******************************************************************************
@@ -1057,6 +1076,9 @@ OnEvent  EVVSPRX            call HandlerLoop    //EVVSPRX is thrown when VSP is 
 OnEvent  EVUARTRX           call HandlerLoop    //EVUARTRX  = data has arrived at the UART interface
 OnEvent  EVVSPTXEMPTY       call HandlerLoop
 OnEvent  EVUARTTXEMPTY      call HandlerLoop
+
+OnEvent  EVBLE_PHY_UPDATED  call HandlerPhyChngd   // PHY changed
+OnEvent  EVBLE_PHY_REQUEST  call HandlerPhyReq     // PHY change request
 
 //------------------------------------------------------------------------------
 // Initialise Services and then wait for events

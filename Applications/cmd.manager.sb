@@ -2801,7 +2801,6 @@ function  HandlerPhyReq(BYVAL hConn, BYVAL PhyTx, BYVAL PhyRx)
     print "PhyTx=";PhyTx;" PhyRx =";PhyRx;"\n"
 endfunc 1
 
-
 //******************************************************************************
 //******************************************************************************
 // Equivalent to main() in C

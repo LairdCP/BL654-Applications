@@ -749,6 +749,24 @@ FUNCTION HndlrNtfyDo()
     ENDIF
 ENDFUNC 1
 
+//==============================================================================
+// This handler is called when the BLE PHY is changed
+//==============================================================================
+function  HandlerPhyChngd(BYVAL hConn, BYVAL nStatus, BYVAL PhyTx, BYVAL PhyRx)
+    //print "BLE PHY CHANGED: \n"
+    //print "Handle: ";integer.h' hConn;"\n"
+    //print "Status: ";integer.h' nStatus;"\n"
+    //print "PhyTx=";PhyTx;" PhyRx =";PhyRx;"\n"
+endfunc 1
+
+//==============================================================================
+// This handler is called when there is a requiest for PHY change
+//==============================================================================
+function  HandlerPhyReq(BYVAL hConn, BYVAL PhyTx, BYVAL PhyRx)
+    // Accept incoming PHY request by default
+    rc = BlePhySet(hConn, PhyTx, PhyRx, 0)
+endfunc 1
+
 //Open GATT Client
 rc = BleGattcOpen(0,0)
 PRINT "RTC Client ready!\n"
@@ -757,15 +775,17 @@ PRINT "RTC Client ready!\n"
 TargetBT$ = STRDEHEXIZE$(TargetBT$)
 
 //Events
-ONEVENT EVUARTRX             CALL HndlrUartRx //Runs when UART gets data
-ONEVENT EVBLE_SCAN_TIMEOUT   CALL HndlrScanTO //Runs when BLE scan times out
-ONEVENT EVBLE_ADV_REPORT     CALL HndlrAdvRpt //Runs when a BLE scan report is ready
-ONEVENT EVBLE_CONN_TIMEOUT   CALL HndlrCnTOut //Runs on connection timeout
-ONEVENT EVBLEMSG             CALL HndlrBleMsg //Runs on BLE message
-ONEVENT EVATTRREAD           CALL HndlrGCData //Runs on GATT Client data ready for reading
-ONEVENT EVFINDCHAR           CALL HndlrFindCh //Runs on characteristic found
-ONEVENT EVATTRWRITE          CALL HndlrWrtnCh //Runs on characteristic written
-ONEVENT EVFINDDESC           CALL HndlrFindDe //Runs on descriptor found
-ONEVENT EVATTRNOTIFY         CALL HndlrNtfyDo //Runs on notification received
+ONEVENT EVUARTRX             CALL HndlrUartRx      //Runs when UART gets data
+ONEVENT EVBLE_SCAN_TIMEOUT   CALL HndlrScanTO      //Runs when BLE scan times out
+ONEVENT EVBLE_ADV_REPORT     CALL HndlrAdvRpt      //Runs when a BLE scan report is ready
+ONEVENT EVBLE_CONN_TIMEOUT   CALL HndlrCnTOut      //Runs on connection timeout
+ONEVENT EVBLEMSG             CALL HndlrBleMsg      //Runs on BLE message
+ONEVENT EVATTRREAD           CALL HndlrGCData      //Runs on GATT Client data ready for reading
+ONEVENT EVFINDCHAR           CALL HndlrFindCh      //Runs on characteristic found
+ONEVENT EVATTRWRITE          CALL HndlrWrtnCh      //Runs on characteristic written
+ONEVENT EVFINDDESC           CALL HndlrFindDe      //Runs on descriptor found
+ONEVENT EVATTRNOTIFY         CALL HndlrNtfyDo      //Runs on notification received
+ONEVENT EVBLE_PHY_UPDATED    CALL HandlerPhyChngd  //PHY changed
+ONEVENT EVBLE_PHY_REQUEST    CALL HandlerPhyReq    //PHY change request
 
 WAITEVENT
