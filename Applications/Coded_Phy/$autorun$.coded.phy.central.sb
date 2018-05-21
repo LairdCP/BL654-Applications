@@ -39,7 +39,7 @@
 #define BLE_2M_PHY                      2
 #define BLE_CODED_PHY                   4
 
-// Hardcoded GATT attributes of remote BL652 running $autorun$.dle.peripheral.sb
+// Hardcoded GATT attributes of remote BL654 running $autorun$.dle.peripheral.sb
 #define REMOTE_RX_VALUE_HANDLE          21
 #define REMOTE_TX_VALUE_HANDLE          23
 #define REMOTE_MODEMIN_VALUE_HANDLE     18
@@ -65,9 +65,9 @@ dim BufferFull : BufferFull = 0     //Buffer full
 dim u$ : u$ = ""                    //UART read buffer
 dim RecBuf$ : RecBuf$ = ""          //VSP read buffer
 dim ModemStat : ModemStat = 1       //Modem in status
-dim nBleMaxPacketLength             //Default maximum packet length on BL652
-dim nAttributeMTU                   //Default Maximum Transmission Unit on BL652
-dim nAttributeLength                //Default Attribute Data Length on BL652
+dim nBleMaxPacketLength             //Default maximum packet length on BL654
+dim nAttributeMTU                   //Default Maximum Transmission Unit on BL654
+dim nAttributeLength                //Default Attribute Data Length on BL654s
 dim nHighBandwidth                  //Default High Bandwidth configuration
 
 //******************************************************************************
@@ -80,9 +80,9 @@ MOHandle = REMOTE_MODEMOUT_VALUE_HANDLE
 TXCCCDHandle = REMOTE_TX_CCCD_HANDLE
 MOCCCDHandle = REMOTE_MODEMOUT_CCCD_HANDLE
 
-nBleMaxPacketLength = 27            // The default maximum packet length on BL652 is 27
-nAttributeMTU = 23                  // The default ATT_MTU on the BL652 is 23
-nAttributeLength = 20               // The default attribute length on the BL652 is 20
+nBleMaxPacketLength = 27            // The default maximum packet length on BL654 is 27
+nAttributeMTU = 23                  // The default ATT_MTU on the BL654 is 23
+nAttributeLength = 20               // The default attribute length on the BL654 is 20
 nHighBandwidth = 0                  // The default bandwidth configuration, 1=High, 0=Low
 
 //******************************************************************************

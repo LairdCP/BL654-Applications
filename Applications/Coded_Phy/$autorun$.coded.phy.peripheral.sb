@@ -55,9 +55,9 @@ dim UARTBlocked : UARTBlocked = 0   // When set to 1 will not read data from the
 dim UartData$                       // Data from the UART waiting to be sent out
 
 
-dim nBleMaxPacketLength : nBleMaxPacketLength = 27  //Default maximum packet length on BL652
-dim nAttributeMTU       : nAttributeMTU = 23        //Default Maximum Transmission Unit on BL652
-dim nAttributeLength    : nAttributeLength = 20     //Default Attribute Data Length on BL652
+dim nBleMaxPacketLength : nBleMaxPacketLength = 27  //Default maximum packet length on BL654
+dim nAttributeMTU       : nAttributeMTU = 23        //Default Maximum Transmission Unit on BL654
+dim nAttributeLength    : nAttributeLength = 20     //Default Attribute Data Length on BL654
 dim nHighBandwidth      : nHighBandwidth = 0        //Default configuration, 1=High, 0=Low
 
 //******************************************************************************
@@ -136,7 +136,7 @@ ELSE
 ENDIF
 
     // Register GAP service with device name and connection intervals
-    dim DevName$ : DevName$ = "LAIRD_BL652"
+    dim DevName$ : DevName$ = "LAIRD_BL654"
     rc = BleGapSvcInit(DevName$, 0, 0, nMinConnInterval, nMaxConnInterval, 4000000,  0)
 
     // Start Ble adverts
