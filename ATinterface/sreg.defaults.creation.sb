@@ -201,7 +201,7 @@ SReg16SetCache()
 SReg32SetCache()
 SRegStrSetCache()
 
-//print the values that can be easliy cut and pasted
+//print the values that can be easily cut and pasted
 
 print "\n//------------------------------------------------------------------------------"
 print "\n//                  100+    0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9"

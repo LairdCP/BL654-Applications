@@ -40,7 +40,7 @@
 //    BL652 First public deployment via the BL652 apps repository in github
 //
 //  0.20 "1/June/2017"
-//    Througput 127kbps bi-directional (total 254kbps) without data length
+//    Throughput 127kbps bi-directional (total 254kbps) without data length
 //    extension, SRreg100 enhanced with extra bit to allow 6 packets per 
 //    connection interval. By default that bit is set to give 6 pkts
 //
@@ -126,7 +126,7 @@
 #define MAX_CONNECTIONS                           8
 
 //------------------------------------------------------------------------------
-//It is NOT recommened that the following be modified 
+//It is NOT recommended that the following be modified
 //------------------------------------------------------------------------------
 
 //This defines the maximum number of uuid handles
@@ -135,7 +135,7 @@
 //This defines the maximum number of elements in metadata array
 #define MAX_METADATA_HANDLES                      4
 
-//Maximum comma seperated arguments allowed in an AT command
+//Maximum comma separated arguments allowed in an AT command
 #define MAX_ARGS_IN_ATCMD                         10
 
 //ASCII characters
@@ -154,7 +154,7 @@
 #define TMRNUM_ENCR_WAIT                          0
 #define TMRNUM_DATA_PUMP                          1
 
-//Maximum length of attibute length in 
+//Maximum length of attribute length in
 #define MAX_ATTIBUTE_LEN                          250
 
 //Only check for carets in uar buffer if there is at least this
@@ -368,7 +368,7 @@ dim nArg[MAX_ARGS_IN_ATCMD]
 //encrypt the connection within the time (if the encryption flag is enabled)
 dim encDisconTime   //if 0 then encryption via S102 is not requested
 
-//This is the serice uuid that was submitted to BleVspOpen
+//This is the service uuid that was submitted to BleVspOpen
 dim handleVspServiceUuid : handleVspServiceUuid=0
 
 //When scanning using AT+BLS, this is the pattern to search for in each advert report
@@ -443,9 +443,9 @@ dim vspAllowRx
 dim vspAttrMaxLen
 //This is used to count the number of ^ in slow mode to drop the connection
 dim vspEscCount
-//This is the tick count when a ^ is recieved in slow mode
+//This is the tick count when a ^ is received in slow mode
 dim vspEscStart
-//This is the max count of receiced ^ chrs to trigger a disconnect
+//This is the max count of received ^ chrs to trigger a disconnect
 dim vspEscCountMax 
 //This is the min interval between two ^ to count towards escaping towards a disconnect
 dim vspEscMinIntrvl
@@ -544,7 +544,7 @@ dim charIdx
 #cmpif 0x00000004 : endsub 
 
 //------------------------------------------------------------------------------
-// This shows the cuttent connection parameters
+// This shows the current connection parameters
 //------------------------------------------------------------------------------
 #cmpif 0x00000008 : sub ShowConnParms(nCtx)
 #cmpif 0x00000008 :   dim intrvl,sprvto,slat
@@ -658,7 +658,7 @@ function IsQuoted(str$)
 endfunc 0
 
 //------------------------------------------------------------------------------
-// Non-voltatile storage error handler (if program is set to stop running)
+// Non-volatile storage error handler (if program is set to stop running)
 //------------------------------------------------------------------------------
 sub NvFailure()
   //Non-volatile storage failure and application set to not continue when this is detected
@@ -746,7 +746,7 @@ endsub
 //******************************************************************************
 
 //------------------------------------------------------------------------------
-// get node index number from connection handle. If not found 0 will be returned 
+// get node index number from connection handle. If not found 0 will be returned
 // otherwise a number between 1 and MAX_CONNECTIONS
 //------------------------------------------------------------------------------
 function GetIdxFromHConn(hConn as integer) as integer
@@ -760,7 +760,7 @@ function GetIdxFromHConn(hConn as integer) as integer
 endfunc 0
 
 //------------------------------------------------------------------------------
-// get free node index number for connection handle. If not found 0 will be returned 
+// get free node index number for connection handle. If not found 0 will be returned
 // otherwise a number between 1 and MAX_CONNECTIONS
 //------------------------------------------------------------------------------
 function GetFreeIdx() as integer
@@ -774,7 +774,7 @@ function GetFreeIdx() as integer
 endfunc 0
 
 //------------------------------------------------------------------------------
-// Save a charactertic handle to the managed array so that we can report an
+// Save a characteristic handle to the managed array so that we can report an
 // index number to the host.
 //------------------------------------------------------------------------------
 function AddCharHandle(charH,byref nIdx) as integer
@@ -787,7 +787,7 @@ function AddCharHandle(charH,byref nIdx) as integer
 endfunc RSP_TOO_MANY_CHARACTERISTICS
 
 //------------------------------------------------------------------------------
-// get node index number from characteristc handle. If not found 0 will be returned 
+// get node index number from characteristic handle. If not found 0 will be returned
 // otherwise a number between 1 and MAX_CHARACTISTICS
 //------------------------------------------------------------------------------
 function GetIdxFromHChar(hChar as integer) as integer
@@ -801,10 +801,10 @@ function GetIdxFromHChar(hChar as integer) as integer
 endfunc 0
 
 //------------------------------------------------------------------------------
-// The rest of the str$ should be up to 10 arguments seperated by ','
+// The rest of the str$ should be up to 10 arguments separated by ','
 // returns RSP_OK if ok and 'args' is updated with number of args and the global
 // string array sArg$[] contains the arguments (but not the ',')
-// If any arguments have "" delimitors they are removed
+// If any arguments have "" delimiters they are removed
 //------------------------------------------------------------------------------
 function ExtractArgsCSV(str$,byref args, minargs,maxargs)
   dim tlen, commaExp, chr
@@ -1601,7 +1601,7 @@ endsub
 
 //--------------------------------------------------------------------------
 // Given a connection handle, returns 0 if not connected to a trusted device
-// otherwise 1 for unauthenticated pairing and 2 for authenticaed
+// otherwise 1 for unauthenticated pairing and 2 for authenticated
 //--------------------------------------------------------------------------
 function IsTrustedPeer(hConn)
   dim kInfo, rAge, rCount,klen
@@ -1879,7 +1879,7 @@ sub OnConnect(hConn)
 endsub      
 
 //------------------------------------------------------------------------------
-//Called on connection going encrryted
+//Called on connection going encrypted
 //------------------------------------------------------------------------------
 sub OnEncrypted(hConn)
   dim sendMsg : sendMsg=1
@@ -2051,7 +2051,7 @@ endsub
 
 //------------------------------------------------------------------------------
 //We know there is 1 character in the uart buffer so process it for ^ character
-//On exit dontcare$ contains the single caracter that was read from the buffer
+//On exit dontcare$ contains the single character that was read from the buffer
 //------------------------------------------------------------------------------
 sub PollForEscapeSeq()
   dim uLen
@@ -2222,7 +2222,7 @@ sub CacheConfigScanParms()
 endsub
 
 //------------------------------------------------------------------------------
-// Extract exatcly one parameter which MUST be a valid 14 hex digit address
+// Extract exactly one parameter which MUST be a valid 14 hex digit address
 //------------------------------------------------------------------------------
 function ExtractAddr(byref cmdStr$)  //sArg$[0] is updated with address
   dim args
@@ -2738,7 +2738,7 @@ function _atPlusBNDT(byref cmdStr$, byref rspBuf$)
   isTrusted = BleBondingIsTrusted(sArg$[0], asCentral, keyInfo, rollAge, rollCount)
   if isTrusted then
     if rollAge <= 0 then
-      rollAge=0   //persistant
+      rollAge=0   //persistent
     else
       rollAge=1   //rolling
     endif
@@ -3516,7 +3516,7 @@ sub ParseAtCommand(byref cmdStr$, byref rspBuf$)
     case ATCMD_D,(ATCMD_D+0x20)
       rc=_atD(cmdStr$,rspBuf$)
       AppendConnRspEnd(rc,rspBuf$)
-      exitsub //becuase we don't what to hit the AppendRspEnd() at the end of this routine
+      exitsub //because we don't what to hit the AppendRspEnd() at the end of this routine
       
     case ATCMD_Z,(ATCMD_Z+0x20)
       reset(0)
@@ -3629,7 +3629,7 @@ sub Startup()
   GapServiceGetDefs()  //into sArg$[] and nArg[]
   rc=GapServiceUpdate()  
   
-  //Cache & Config Scanning Paramters
+  //Cache & Config Scanning Parameters
   CacheConfigScanParms()  
   
   //Precreate the idle more advert reports
@@ -3800,7 +3800,7 @@ function HndlrDisCon(hndl as integer, rsn as integer)
   case STATE_VSP_DISCONNECTING, STATE_VSP_PAIRING, STATE_VSP_CARET_CONNECTED,STATE_VSP_FAST_CONNECTED
     //Some other error while writing to a cccd
     if vspDisconSts<=0 then 
-      //assume a normal disconnection has happenned
+      //assume a normal disconnection has happened
       vspDisconSts=CONN_ERROR_USER_DISCON
     endif
     VspNoCarrierRet(vspDisconSts)  
@@ -3964,7 +3964,7 @@ function HandlerAttrWrite(hConn,hAttr,xSts)
     //check status
     if xSts==0 then
       //#cmpif 0x00000004 : DbgMsg("EvAttrWrite OK")
-      //a cccd was successfuly written, so check for next
+      //a cccd was successfully written, so check for next
       vspFindIndex=vspFindIndex+1
       if vspFindIndex>=VSP_ATTR_MAX_INDEXES then
         //all cccd's written
@@ -3998,7 +3998,7 @@ function HandlerAttrWrite(hConn,hAttr,xSts)
     
   case STATE_VSP_FAST_CONNECTED,STATE_VSP_CARET_CONNECTED
 #cmpif 0x00040000 : vspWaitAck=0
-    //and immeditaly send more data if we can
+    //and immediately send more data if we can
     rc = HndlrUartRxVspOutFC()
     
   case STATE_nonVSP_CONNECTED

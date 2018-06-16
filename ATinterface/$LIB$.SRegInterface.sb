@@ -169,7 +169,7 @@ sub SReg8SetCache()
     #cmpif 0x00010000 : rc=BleEncode8(  SregMin8$[0],0,offset)
     #cmpif 0x00010000 : rc=BleEncode8(  SregMax8$[0],1,offset)
             
-//S113 :: Scan rssi minimim
+//S113 :: Scan rssi minimum
 #define CfgId_ScanRssiMinimum           13
     #cmpif 0x00010000 : offset=CfgId_ScanRssiMinimum
     #cmpif 0x00010000 : rc=BleEncode8(SregCache8$[0],-120,offset)  
