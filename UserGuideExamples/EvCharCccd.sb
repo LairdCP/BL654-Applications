@@ -51,7 +51,7 @@ FUNCTION HndlrBleMsg(BYVAL nMsgId, BYVAL nCtx)
 ENDFUNC 1
 
 //==============================================================================
-// Indication acknowledgement from client handler
+// Indication acknowledgment from client handler
 //==============================================================================
 FUNCTION HndlrCharHvc(BYVAL charHandle AS INTEGER) AS INTEGER 
 	IF charHandle == hMyChar THEN

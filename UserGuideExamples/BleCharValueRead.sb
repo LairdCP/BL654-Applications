@@ -40,7 +40,7 @@ FUNCTION HndlrChar(BYVAL chrHndl, BYVAL offset, BYVAL len)
 ENDFUNC 0
 
 //==============================================================================
-// Get the connnection handle 
+// Get the connection handle 
 //==============================================================================
 FUNCTION HndlrBleMsg(BYVAL nMsgId, BYVAL nCtn)
     conHndl=nCtn

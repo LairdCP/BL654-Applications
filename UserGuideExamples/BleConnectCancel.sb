@@ -35,7 +35,7 @@ FUNCTION HndlrAdvRpt()
     '//Cancel current connection attempt
     rc=BleConnectCancel()
     
-    PRINT "\n--- Connection attempt cancelled"
+    PRINT "\n--- Connection attempt canceled"
 ENDFUNC 0
 
        

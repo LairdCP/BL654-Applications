@@ -3,7 +3,7 @@
 DIM rc,conHndl,hMyChar
 
 //----------------------------------------------------------------------------
-//Create some PRIMARY service attribure which has a uuid of 0x18FF
+//Create some PRIMARY service attribute which has a uuid of 0x18FF
 //----------------------------------------------------------------------------
 SUB OnStartup()
     DIM hSvc,attr$,scRpt$,adRpt$,addr$    
