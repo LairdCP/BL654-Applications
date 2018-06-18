@@ -27,7 +27,7 @@ Best Practices for Writing smartBASIC Applications
 2. smartBASIC is event driven; ensure that the application is written in an event-driven manner. Starting with a state-machine or a flowchart is highly recommended.
 3. Minimize the use of WAITEVENTs; ideally, WAITEVENT should be used only once at the end of the program to ensure the app is simple and robust.
 4. Minimize radio usage when possible to save power.
-5. Use comments wherever possible to ensure that the appliaction can be read and understood.
+5. Use comments wherever possible to ensure that the application can be read and understood.
 6. Only hard-code when necessary. When hard-coding, use #defines to give meaning to the constants used.
 7. Follow the smartBASIC app  template found [here](https://github.com/LairdCP/BL654-Applications/blob/master/Applications/ttt.template.sb).
 
