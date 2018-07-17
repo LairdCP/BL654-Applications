@@ -27,8 +27,6 @@
 //******************************************************************************
 // Definitions
 //******************************************************************************
-#define ENABLE_DATA_LENGTH_EXTENSION       1
-
 #define BLE_TX_PWOER                    8 // Possible values are 8, 7, 6, 5, 4, 3, 2, 0, -4, -8, -12, -16, -20, -40dBm
 
 #define BLE_1M_PHY                      1
@@ -87,18 +85,12 @@ sub AssertRC(rc, tag)
 endsub
 
 //-------------------------------------------------------------------------------
-// Definitions for attribute values needed to achieve Data Length Extension
-#define ATTRIBUTE_MTU_KEY_ID                    211    // CFG ID 211
-#define ATTRIBUTE_DATA_LENGTH_KEY_ID            212    // CFG ID 212
+// Definitions for attribute values to achieve higher bandwidth needed for CODED PHY
 #define USE_STRINT_IN_EVENTS_KEY_ID             213    // CFG ID 213
 #define ENABLE_HIGH_BANDWIDTH_KEY_ID            214    // CFG ID 214
-#define BLE_MAX_PACKET_LENGTH_KEY_ID            216    // CFG ID 216
 
-#define ATTRIBUTE_DATA_LENGTH_MAXIMUM           20  // Gatt Server Attribute Maximum Length - Range:20-244
-#define ATTRIBUTE_MTU_MAXIMUM                   23  // Attribut Maximum Trnasmission Unit - Range:23-247
-#define BLE_MAX_PACKET_LENGTH                   27  // BLE Maximum packet length - Range: 27:251
 #define USE_STRING_IN_EVENTS                    1   // 0: use EVATTRNOTIFY, 1: use EVATTRNOTIFYEX (See user manual)
-#define BLE_ENABLE_HIGH_BANDWIDTH               1   // 0: 3 packets/interval (default), 1: 6 packets/interval
+#define BLE_ENABLE_HIGH_BANDWIDTH               1      // 0: Normal Bandwidth (default), 1: High Bandwidth
 
 //-------------------------------------------------------------------------------
 // This function is to enable the High Bandwidth configuration in order to achieve the long range
@@ -118,6 +110,7 @@ FUNCTION EnableHighBandwidth()
     ENDIF
 
 ENDFUNC 0
+
 //------------------------------------------------------------------------------
 // Start LE Adverts
 //------------------------------------------------------------------------------
@@ -125,15 +118,9 @@ FUNCTION BleStartAdverts()
 
     DIM nMinConnInterval, nMaxConnInterval
 
-IF ENABLE_DATA_LENGTH_EXTENSION==1 THEN
-    // For packet length extension, the optimum connection interval is 28750 us
-    nMinConnInterval = 28000
-    nMaxConnInterval = 29000
-ELSE
     // For default packet length, the optimum connection interval is 7500 us
     nMinConnInterval = 7500
     nMaxConnInterval = 7700
-ENDIF
 
     // Register GAP service with device name and connection intervals
     dim DevName$ : DevName$ = "LAIRD_BL654"
@@ -146,7 +133,7 @@ ENDIF
 ENDFUNC 0
 
 //------------------------------------------------------------------------------
-// This shows the cuttent connection parameters
+// This shows the current connection parameters
 //------------------------------------------------------------------------------
 SUB ShowConnParms()
     DIM intrvl,sprvto,slat
@@ -315,20 +302,6 @@ FUNCTION HndlrCharValue(nConnHandle, charHandle, offset, len, BYVAL Rd$ AS STRIN
 
 ENDFUNC 1
 
-//------------------------------------------------------------------------------
-// EVATTRIBUTEMTU - This handler is called when there is an event that the attribute MTU has changed
-//------------------------------------------------------------------------------
-FUNCTION HandlerAttrMTUchng(BYVAL hCOnn AS INTEGER, BYVAL nSize AS INTEGER)
-    print "## Attribute MTU Changed - Size=";nSize;"\n"
-ENDFUNC 1
-
-//------------------------------------------------------------------------------
-// EVPACKETLENGTH - This handler is called when the packet length is changed
-//------------------------------------------------------------------------------
-FUNCTION HandlerPacketLength(BYVAL hConn, BYVAL Tx_Octets, BYVAL Tx_Time, BYVAL Rx_Octets, BYVAL Rx_Time)
-    print "## Packet Length Changed - Tx=";Tx_Octets;" Rx=";Tx_Octets;"\n"
-ENDFUNC 1
-
 //==============================================================================
 // EVBLE_PHY_UPDATED - This handler is called when the BLE PHY is changed
 //==============================================================================
@@ -374,9 +347,6 @@ ONEVENT EVBLEMSG          CALL HndlrBleMsg
 ONEVENT EVCHARVAL         CALL HndlrCharVal           // Used if AT+CFG 213=0
 ONEVENT EVCHARVALUE       CALL HndlrCharValue         // Used if AT+CFG 213=1
 ONEVENT EVNOTIFYBUF       CALL HndlrNtfyBuf
-// Data Length Extenstion events
-ONEVENT EVATTRIBUTEMTU    CALL HandlerAttrMTUchng
-ONEVENT EVPACKETLENGTH    CALL HandlerPacketLength
 // BLE PHY
 OnEvent EVBLE_PHY_UPDATED CALL HandlerPhyChngd
 OnEvent EVBLE_PHY_REQUEST CALL HandlerPhyReq
