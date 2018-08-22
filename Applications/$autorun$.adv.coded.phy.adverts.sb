@@ -1,0 +1,83 @@
+// Copyright (c) 2013, Laird
+//
+// Permission to use, copy, modify, and/or distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+// SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+// ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+// IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+//
+// SPDX-License-Identifier:ISC
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++                                                                      ++
+// +++++  When UwTerminal downloads the app it will store it as a filenname   ++
+// +++++  which consists of all characters up to the first . and excluding it ++
+// +++++                                                                      ++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// $autorun$.adv.coded.phy.adverts.sb
+//
+// This app is used for advertising over long range (CODED PHY)
+//
+//
+//******************************************************************************
+// Definitions
+//******************************************************************************
+#define BLE_GAP_1M_PHY                    1
+#define BLE_GAP_CODED_PHY                 4
+#define ENABLE_HIGH_BANDWIDTH_KEY_ID      214    // CFG ID 214
+#define BLE_ENABLE_HIGH_BANDWIDTH         1      // 0: medium bandwidth 1: high bandwidth
+
+//******************************************************************************
+// Global Variable Declarations
+//******************************************************************************
+dim rc,addr$, nBandwidth
+
+//-------------------------------------------------------------------------------
+// This function is used to configure the BL654 to use high bandwidth
+//-------------------------------------------------------------------------------
+FUNCTION BleHighBandwidth()
+
+    // Get current bandwidth configuration
+	rc = NvCfgKeyGet(ENABLE_HIGH_BANDWIDTH_KEY_ID, nBandwidth)
+
+    // Check if these are the values needed to achieve DLE
+    IF  (nBandwidth != BLE_ENABLE_HIGH_BANDWIDTH) THEN
+        // Change the bandwidth configuration to HIGH
+        rc = NvCfgKeySet(ENABLE_HIGH_BANDWIDTH_KEY_ID, BLE_ENABLE_HIGH_BANDWIDTH)
+        // Reset the module so that the data is overwritten
+        Reset(0)
+    ENDIF
+
+ENDFUNC 0
+
+//******************************************************************************
+// Equivalent to main() in C
+//******************************************************************************
+
+// Enable high bandwidth
+rc = BleHighBandwidth()
+
+// Set the primary and secondary PHY to CODED PHY
+rc = BleAdvertConfig(4,BLE_GAP_CODED_PHY) 
+rc = BleAdvertConfig(5,BLE_GAP_CODED_PHY)
+
+rc = BleAdvertStart(6,addr$,100,30000,0)
+if rc == 0 then
+	print "\nSuccessfully started advertising over CODED PHY"
+else 
+	print "\nFailed to advertise with error code ";integer.h' rc
+endif
+
+//------------------------------------------------------------------------------
+// Wait for a synchronous event.
+//------------------------------------------------------------------------------
+WaitEvent
+
+
