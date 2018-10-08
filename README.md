@@ -7,19 +7,17 @@ BL654 Overview
 ------------
 Laird’s BL654 contains the latest generation silicon with Bluetooth Low Energy v5 capabilities and groundbreaking ultra-low power performance. Building on the expertise of the BL600 and BL652 Series, the BL654’s class-leading Nordic nRF52840 silicon, optimized low power schemes and smartBASIC programming language provide a secure, stable, hostless Bluetooth environment. The BL654 introduces Bluetooth v5, bringing long range connectivity, industrial security and feature expansion to Laird’s proven Bluetooth Low Energy modules. Let Laird’s innovative BL654 series and decades of expertise in Bluetooth module design speed your product to market.
 
-**Note:** (February 2017) - Only engineering samples of the BL654 series are available, documentation and additional example/sample code will be added in the future.
-
 UwTerminalX
 -----------
 UwTerminalX is a cross-platform utility for communicating and downloading applications onto the BL654. The latest releases are available at https://github.com/LairdCP/UwTerminalX/releases
 
-BL654 Quick Start Demonstration
--------------------------------
-The BL654 quick start documentation will be available soon.
+BL654 Documentation
+-------------------
+Documentation for the BL654 can be found on the [Laird BL654 website](https://www.lairdtech.com/products/bl654-ble-thread-nfc-modules) including a [quick start guide for using the AT interface application](https://assets.lairdtech.com/home/brandworld/files/AT%20Interface%20Quick%20Start%20Guide%20v1_0.pdf)
 
 Older firmwares
 -------------------------------
-The files in this repository are designed for use with the latest BL654 firmware, which at the time of writing is 29.0.0.3-ALPHA-1. For applications targeting older firmware, please check the [Releases tab](https://github.com/LairdCP/BL654-Applications/releases)
+The files in this repository are designed for use with the latest BL654 firmware, which at the time of writing is 29.2.2.0. For applications targeting older firmware, please check the [Releases tab](https://github.com/LairdCP/BL654-Applications/releases)
 
 Best Practices for Writing smartBASIC Applications
 -------------------------------
@@ -29,7 +27,7 @@ Best Practices for Writing smartBASIC Applications
 4. Minimize radio usage when possible to save power.
 5. Use comments wherever possible to ensure that the application can be read and understood.
 6. Only hard-code when necessary. When hard-coding, use #defines to give meaning to the constants used.
-7. Follow the smartBASIC app  template found [here](https://github.com/LairdCP/BL654-Applications/blob/master/Applications/ttt.template.sb).
+7. Follow the smartBASIC app template found [here](https://github.com/LairdCP/BL654-Applications/blob/master/Applications/ttt.template.sb).
 
 Notes
 -------------------------------
