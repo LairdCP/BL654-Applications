@@ -1,0 +1,38 @@
+//Example :: QSPI_Custom.sb
+dim rc
+dim qspihandle
+dim wr$, rd$
+
+sub AssertRC(rc, tag)
+  if rc!=0 then
+        print "Failed with ";integer.h' rc;" at tag ";tag;"\n"
+  endif
+endsub
+
+function QSPICustomTest()
+    rc = QSPIOpen(qspihandle)
+    AssertRC(rc, 0)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Opened QSPI interface, handle: ";qspihandle;"\r\n"
+
+    //This op-code, 0x9f, is the RDID (read identification) command
+    wr$ = "\9f\00\00\00"
+    rc = QSpiCustomCommand(qspihandle, wr$, rd$, 1, 1, 0, 0)
+    AssertRC(rc, 1)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Custom command sent: ";strhexize$(wr$);", got: ";strhexize$(rd$);"\r\n"
+
+    rc = QSPIClose(qspihandle)
+    AssertRC(rc, 2)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "QSPI handle ";qspihandle;" closed.\r\n"
+endfunc 1
+
+print "QSPI custom command example, ensure SB4, SB5, SB6, SB7, SB10 and SB11 are soldered before running.\r\n\r\n"
+rc = QSPICustomTest()

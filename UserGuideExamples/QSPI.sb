@@ -1,0 +1,140 @@
+//Example :: QSPI.sb
+dim rc
+dim qspihandle
+dim tmpval
+dim Manufacturer, MemoryType, MemoryDensity
+dim data$
+
+sub AssertRC(rc, tag)
+  if rc!=0 then
+        print "Failed with ";integer.h' rc;" at tag ";tag;"\n"
+  endif
+endsub
+
+function QSPITest()
+    rc = QSPIConfigGet(6, tmpval)
+    AssertRC(rc, 0)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Default drive strength is: ";tmpval;"\r\n"
+
+    rc = QSPIConfigSet(6, 1)
+    AssertRC(rc, 1)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Changed drive strength to: 1\r\n"
+
+    rc = QSPIConfigGet(6, tmpval)
+    AssertRC(rc, 2)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Drive strength is now: ";tmpval;"\r\n"
+
+    rc = QSPIOpen(qspihandle)
+    AssertRC(rc, 3)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Opened QSPI interface, handle: ";qspihandle;"\r\n"
+
+    rc = QSPIConfigSet(6, 0)
+    AssertRC(rc, 4)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Changed volatile drive strength configuration to: 0\r\n"
+
+    rc = QSPIActiveConfigGet(qspihandle, 6, tmpval)
+    AssertRC(rc, 5)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Drive strength on handle ";qspihandle;" is: ";tmpval;"\r\n"
+
+    rc = QSPISetPowerMode(qspihandle, 1)
+    AssertRC(rc, 6)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Entered high performance mode\r\n"
+
+    rc = QSPIErase(qspihandle, 0, 0)
+    AssertRC(rc, 7)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Erased 4KB sector at 0x0\r\n"
+
+    data$ = "test data ab"
+    rc = QSPIWrite(qspihandle, data$, 0x4)
+    AssertRC(rc, 8)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Wrote '";data$;"' to 0x4\r\n"
+
+    data$ = ""
+    rc = QSPIRead(qspihandle, data$, 0x4, 12)
+    AssertRC(rc, 9)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Read '";data$;"' from 0x4\r\n"
+
+    rc = QSPIInfo(qspihandle, Manufacturer, MemoryType, MemoryDensity)
+    AssertRC(rc, 7)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "QSPI memory manufacturer ID: ";Manufacturer;", memory type: ";MemoryType;", density: ";MemoryDensity;"\r\n"
+
+    rc = QSPIMemorySize(qspihandle, 6, tmpval)
+    AssertRC(rc, 7)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "QSPI memory size: ";tmpval;"KB\r\n"
+
+    rc = QSPIDPMSet(qspihandle, 1)
+    AssertRC(rc, 7)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Entered DPM\r\n"
+
+    tmpval = QSPIIsDPM(qspihandle)
+    print "DPM mode: ";tmpval;"\r\n"
+
+    tmpval = QSPIIsBusy(qspihandle)
+    print "Busy (with erase): ";tmpval;"\r\n"
+
+    rc = QSPIDPMSet(qspihandle, 0)
+    AssertRC(rc, 7)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Exited DPM\r\n"
+
+    tmpval = QSPIIsDPM(qspihandle)
+    print "DPM mode: ";tmpval;"\r\n"
+
+    rc = QSPIReset(qspihandle, 0, 1)
+    AssertRC(rc, 7)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "Reset QSPI chip keeping configuration\r\n"
+
+    rc = QSPIClose(qspihandle)
+    AssertRC(rc, 3)
+    if (rc != 0) then
+        exitfunc 0
+    endif
+    print "QSPI handle ";qspihandle;" closed.\r\n"
+endfunc 1
+
+print "QSPI example, ensure SB4, SB5, SB6, SB7, SB10 and SB11 are soldered before running.\r\n\r\n"
+rc = QSPITest()
