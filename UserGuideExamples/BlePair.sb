@@ -104,7 +104,6 @@ endfunc 1
 // Equivalent to main() in C
 //******************************************************************************
 rc=BleSecMngrIoCap(0)           //set io capability to just works
-rc=BleSecMngrJustWorksConf(1)   //module will wait for confirmation (EVBLEMSG 11) before just works pairing
 
 rc=BleGattcOpen(0,0)
 pr$ = GATT_SERVER_ADDRESS

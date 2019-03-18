@@ -428,14 +428,6 @@
 //         4     Keyboard only (authenticated pairing)
 //
 // -----------------------------------------------------------------------------
-// ble pair justworks #INTJWConf#
-//    - Security Manager related
-//    - This will result in BleSecMngrJustWorksConf() being called
-//    - valid values for #INTJWConf# are
-//         0     Pairings works as-is without confirmation
-//         1     Pairings requires confirmation
-//
-// -----------------------------------------------------------------------------
 // ble pair keysize #INTminsize# #INTmaxsize#
 //    - Security Manager related
 //    - This will result in BleSecMngrKeySizes() being called
@@ -1739,7 +1731,6 @@ endfunc 5
 //-------------------------------------------------------------------------
 //#CMD#//  ble pair keysize    #INTminsize# #INTmaxsize#
 //#CMD#//  ble pair iocap      #INTiocap#
-//#CMD#//  ble pair justworks  #INTJWConf#
 //#CMD#//  ble pair passkey    #INTconnHandle# #INTpasscode#
 //#CMD#//  ble pair oobkey     #INTconnHandle# #STRoobcode#
 //#CMD#//  ble pair bondreq    #INTbondreq#
@@ -1772,16 +1763,6 @@ function _BlePair()
             exitfunc rc
         endif
         exitfunc BleSecMngrIoCap(i[1])
-    endif
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if strcmp(tkn$,"justworks")==0 then
-        //Extract 1 (#INTJWConf#) and store starting at i[1]
-        rc = ExtractIntTokens(urtcmd$,1,1)
-        if rc != 0 then
-            exitfunc rc
-        endif
-        exitfunc BleSecMngrJustWorksConf(i[1])
     endif
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

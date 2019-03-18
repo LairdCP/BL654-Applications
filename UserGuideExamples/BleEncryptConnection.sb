@@ -54,7 +54,6 @@ endfunc 1
 
 
 rc=BleSecMngrIoCap(0)           //set io capability to just works
-rc=BleSecMngrJustWorksConf(0)   //module will  not wait for confirmation (EVBLEMSG 11) before just works pairing
 
 pr$ = GATT_SERVER_ADDRESS
 rc=BleConnect(pr$, 10000, 25, 100, 30000000)

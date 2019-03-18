@@ -1077,8 +1077,6 @@ endfunc 1
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 sub Initialise()
-  //Just works pairing will work without confirmation
-  rc = BleSecMngrJustWorksConf(0)
   //Use 'Just Works' pairing
   rc = BleSecMngrIoCap(0)
   //Bond when pairing
