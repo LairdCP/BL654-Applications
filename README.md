@@ -13,7 +13,7 @@ UwTerminalX is a cross-platform utility for communicating and downloading applic
 
 BL654 Documentation
 -------------------
-Documentation for the BL654 can be found on the [Laird BL654 website](https://www.lairdtech.com/products/bl654-ble-thread-nfc-modules) including a [quick start guide for using the AT interface application](https://assets.lairdtech.com/home/brandworld/files/AT%20Interface%20Quick%20Start%20Guide%20v1_0.pdf)
+Documentation for the BL654 can be found on the [Laird BL654 website](https://connectivity.lairdtech.com/wireless-modules/bluetooth-modules/bluetooth-5-modules/bl654-series) including a [quick start guide for using the AT interface application](https://connectivity-staging.s3.us-east-2.amazonaws.com/s3fs-public/2018-10/AT%20Interface%20Quick%20Start%20Guide%20v1_0.pdf)
 
 Older firmwares
 -------------------------------
