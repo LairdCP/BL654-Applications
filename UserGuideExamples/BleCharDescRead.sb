@@ -7,15 +7,19 @@ DIM rc,conHndl,hMyChar
 //----------------------------------------------------------------------------
 SUB OnStartup()
     DIM hSvc,attr$,scRpt$,adRpt$,addr$    
-    rc = BleSvcCommit(1,BleHandleUuid16(0x18FF),hSvc)
-    // Add one or more characteristics 
-    rc = BleCharNew(0x08,BleHandleUuid16(0x2AFF),BleAttrMetadata(1,1,20,1,rc),0,0)
-    attr$="\00"  //no initial alert
-    rc = BleCharCommit(hSvc,attr$,hMyChar)
-    
+
+    rc = BleServiceNew(1, BleHandleUuid16(0x18FF), hSvc)
+    //Add one or more characteristics
+    rc = BleCharNew(0x0a,BleHandleUuid16(0x2AFF),BleAttrMetadata(1,1,20,1,rc),0,0)
+
     //Add a user description
     DIM s$ : s$="You can change this"
     rc=BleCharDescUserDesc(s$,BleAttrMetadata(1,1,20,1,rc))
+
+    attr$="\00"  //no initial alert
+    rc = BleCharCommit(hSvc,attr$,hMyChar)
+    //Commit the service
+    rc = BleServiceCommit(hSvc)    
     
     rc=BleScanRptInit(scRpt$) 
     //Add 1 char handle to scan report
