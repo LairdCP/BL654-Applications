@@ -159,7 +159,7 @@ OnEvent  EVLESCKEYPRESS           call HandlerLescKeypress
 '// Wait for a synchronous event.
 '// An application can have multiple <WaitEvent> statements
 '//------------------------------------------------------------------------------
-
+dim prAdr$ : prAdr$=""
 // Start Adverts
 rc = BleAdvertStart(0,prAdr$,25,0,0)
 PRINT "\nAdverts start"

@@ -1,5 +1,5 @@
 dim rc, nSize
-rc = BleMaxPacketLengthSet(155)
+//rc = BleMaxPacketLengthSet(155)     USE COMMAND 'AT+CFG 211 155' instead
 if rc == 0 THEN
     PRINT "\nMaximum packet length changed to 155 bytes"
 endif

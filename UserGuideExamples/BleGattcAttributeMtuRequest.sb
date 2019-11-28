@@ -62,14 +62,14 @@ endfunc 1
 // Enable synchronous event handlers
 //------------------------------------------------------------------------------
 OnEvent  EVBLEMSG                 call HandlerBleMsg
-OnEvent  EVATTRIBUTEMTU    	      call HandlerAttrMTU
-OnEvent  EVPACKETLENGTH    	      call HandlerPacketLength
+OnEvent  EVATTRIBUTEMTU           call HandlerAttrMTU
+OnEvent  EVPACKETLENGTH           call HandlerPacketLength
 
 
 // Initialise LE routines
 rc = BleAdvertStart(0,addr$,100,0,0)
 // Set maximum packet length to be 251
-rc = BleMaxPacketLengthSet(251)
+//rc = BleMaxPacketLengthSet(251)   USE COMMAND 'AT+CFG 211 247' instead
 // Open the gatt client. Specify the buffer size to be 251 to be able to receive
 // notifications up to 244 bytes long (maximum supported by BL654 when ATT_MTU = 247)
 rc = BleGattcOpen(251, 0)
