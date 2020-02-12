@@ -28,7 +28,7 @@
 // Definitions
 //******************************************************************************
 #define ENABLE_DATA_LENGTH_EXTENSION       1
-#define TXPOWER_DBM                        8
+#define TXPOWER_DBM                        14
 
 //******************************************************************************
 // Global Variable Declarations
@@ -44,6 +44,7 @@ dim MOchar                          // Modem Out characteristic
 dim MIchar                          // Modem In characteristic
 dim MIval                           // Modem In value
 dim txpwr                           // transmit power
+
 
 dim ConnectionID                    // Holds the connection ID of the VSP client (if one is connected)
 dim RecBuf$ : RecBuf$ = ""          // VSP receive buffer
@@ -366,6 +367,7 @@ IF ENABLE_DATA_LENGTH_EXTENSION==1 THEN
     rc = DataLengthExtension()
 ENDIF
 
+//For duty-cycle requirements limit the power has to be limited in the PA variant
 txpwr = TXPOWER_DBM;
 rc=BleTxPowerSet(txpwr)
 if rc!=0 then
