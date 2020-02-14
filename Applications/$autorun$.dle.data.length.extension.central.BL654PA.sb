@@ -382,7 +382,7 @@ IF ENABLE_DATA_LENGTH_EXTENSION==1 THEN
 ENDIF
 
 //For duty-cycle requirements limit the power has to be limited in the PA variant
-txpwr = TXPOWER_DBM;
+txpwr = TXPOWER_DBM
 rc=BleTxPowerSet(txpwr)
 if rc!=0 then
   print "\n BleTxPowerSet failed with ";integer.h' rc

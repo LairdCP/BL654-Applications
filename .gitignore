@@ -18,3 +18,5 @@
 StringPlayer*.exe
 ATinterface/$autorun$.AT.interface.0*.sb
 ATinterface/$TEMP$.vsp.uart.bridge.configurable.incoming.sb
+Applications/XCompile.exe
+Applications/$$$_*.bat

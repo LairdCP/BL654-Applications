@@ -366,7 +366,7 @@ IF ENABLE_DATA_LENGTH_EXTENSION==1 THEN
     rc = DataLengthExtension()
 ENDIF
 
-txpwr = TXPOWER_DBM;
+txpwr = TXPOWER_DBM
 rc=BleTxPowerSet(txpwr)
 if rc!=0 then
   print "\n BleTxPowerSet failed with ";integer.h' rc

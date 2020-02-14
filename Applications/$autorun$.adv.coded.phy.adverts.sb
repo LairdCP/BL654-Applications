@@ -29,50 +29,80 @@
 //******************************************************************************
 // Definitions
 //******************************************************************************
-#define BLE_GAP_1M_PHY                    1
-#define BLE_GAP_CODED_PHY                 4
-#define ENABLE_HIGH_BANDWIDTH_KEY_ID      214    // CFG ID 214
-#define BLE_ENABLE_HIGH_BANDWIDTH         1      // 0: medium bandwidth 1: high bandwidth
+
+#define ADV_SET_ID                      0
+#define ADV_MAXCOUNT                    0
+#define ADV_AUXOFFSET                   0
+
+#define AD_FLAG_GENERAL_AVAILABILITY    2
+#define AD_APPEARANCE                   0
+#define AD_MAXDEVICNAMELEN              11
+
+#define ADV_PROP                        0x9
+#define ADV_PRI_SEC_PHY                 0x1    //LE_CODED for both PRI and SEC
+
+#define ADV_INTERVAL_MS                 100
+#define ADV_DURATION_MS                 30000
 
 //******************************************************************************
 // Global Variable Declarations
 //******************************************************************************
-dim rc,addr$, nBandwidth
-
-//-------------------------------------------------------------------------------
-// This function is used to configure the BL654 to use high bandwidth
-//-------------------------------------------------------------------------------
-FUNCTION BleHighBandwidth()
-
-    // Get current bandwidth configuration
-	rc = NvCfgKeyGet(ENABLE_HIGH_BANDWIDTH_KEY_ID, nBandwidth)
-
-    // Check if these are the values needed to achieve DLE
-    IF  (nBandwidth != BLE_ENABLE_HIGH_BANDWIDTH) THEN
-        // Change the bandwidth configuration to HIGH
-        rc = NvCfgKeySet(ENABLE_HIGH_BANDWIDTH_KEY_ID, BLE_ENABLE_HIGH_BANDWIDTH)
-        // Reset the module so that the data is overwritten
-        Reset(0)
-    ENDIF
-
-ENDFUNC 0
+dim rc
+dim peeraddr$
+dim advRpt$, scnRpt$
 
 //******************************************************************************
 // Equivalent to main() in C
 //******************************************************************************
 
-// Enable high bandwidth
-rc = BleHighBandwidth()
+//==============================================================================
+// This handler is called when there is an advert timeout
+//==============================================================================
 
-// Set the primary and secondary PHY to CODED PHY
-rc = BleAdvertConfig(4,BLE_GAP_CODED_PHY) 
-rc = BleAdvertConfig(5,BLE_GAP_CODED_PHY)
+//==============================================================================
+// This handler is called when adverts started with new api has ended
+//==============================================================================
+function HndlrExtAdvEnd(setid,reason) as integer
+  print "\n\nAdverts ended on set ";setid;" - ";
+  if reason==0 then
+    print "Timeout"
+  else
+    print "Limit, adverts sent ";reason
+  endif
+  print "\nReset module to restart";
+endfunc 1
 
-rc = BleAdvertStart(6,addr$,100,30000,0)
+OnEvent  EVBLE_EXTADV_END         call HndlrExtAdvEnd
+
+//create default advert and scan report
+rc=BleAdvRptInit(advRpt$,AD_FLAG_GENERAL_AVAILABILITY,AD_APPEARANCE,AD_MAXDEVICNAMELEN)
+if rc!=0 then
+  print "\n## BleAdvRptInit error = ";integer.h' rc
+endif
+rc=BleScanRptInit(scnRpt$)
+if rc!=0 then
+  print "\n## BleScanRptInit error = ";integer.h' rc
+endif
+
+//create advert set
+peeraddr$=""
+rc=BleAdvSetCreate(ADV_SET_ID,ADV_PROP,ADV_PRI_SEC_PHY,0,peeraddr$,"")
+if rc!=0 then
+  print "\n## BleAdvSetCreate error = ";integer.h' rc
+endif
+
+//Attach adv report and empty scan report to data set
+rc=BleAdvSetNewData(ADV_SET_ID,advRpt$,scnRpt$)
+if rc!=0 then
+  print "\n## BleAdvSetNewData error = ";integer.h' rc
+endif
+
+//start advertising
+rc=BleAdvSetStart(ADV_SET_ID, ADV_INTERVAL_MS, ADV_DURATION_MS, ADV_MAXCOUNT, ADV_AUXOFFSET)
 if rc == 0 then
-	print "\nSuccessfully started advertising over CODED PHY"
-else 
-	print "\nFailed to advertise with error code ";integer.h' rc
+  print "\nSuccessfully started advertising over CODED PHY"
+else
+  print "\nFailed to advertise with error code ";integer.h' rc
 endif
 
 //------------------------------------------------------------------------------

@@ -23,8 +23,10 @@
 // $autorun$.conn.coded.phy.connection.sb
 //
 // This app scans for devices over CODED PHY and attempts to connect to the first
-// device that it finds
+// device that it finds.
 //
+// Load another BL654 device with $autorun$.adv.coded.phy.adverts.sb to send
+// coded adverts
 //
 //******************************************************************************
 // Definitions
@@ -33,8 +35,15 @@
 #define BLE_GAP_CODED_PHY                 4
 #define BLE_GAP_NORMAL_SCANNING           0
 #define BLE_GAP_EXTENDED_SCANNING         1
-#define ENABLE_HIGH_BANDWIDTH_KEY_ID      214    // CFG ID 214
-#define BLE_ENABLE_HIGH_BANDWIDTH         1      // 0: medium bandwidth 1: high bandwidth
+
+#define SCAN_TIMEOUT_MS                   10000
+#define SCAN_PHYS_ALL                     0x7
+#define SCAN_CHAN_MASK                    ""
+
+#define CONNTIMEOUTMS                     5000
+#define MINCONNINTUS                      7500
+#define MAXCONNINTUS                      300000
+#define SUPRVSNTOURUS                     5000000
 
 //BLE EVENT MSG IDs
 #define BLE_EVBLEMSGID_CONNECT                          0 // msgCtx = connection handle
@@ -54,81 +63,96 @@
 //******************************************************************************
 // Global Variable Declarations
 //******************************************************************************
-dim rc,addr$, nBandwidth
-
-//-------------------------------------------------------------------------------
-// This function is used to configure the BL654 to use high bandwidth
-//-------------------------------------------------------------------------------
-FUNCTION BleHighBandwidth()
-
-    // Get current bandwidth configuration
-	rc = NvCfgKeyGet(ENABLE_HIGH_BANDWIDTH_KEY_ID, nBandwidth)
-
-    // Check if these are the values needed to achieve DLE
-    IF  (nBandwidth != BLE_ENABLE_HIGH_BANDWIDTH) THEN
-        // Change the bandwidth configuration to HIGH
-        rc = NvCfgKeySet(ENABLE_HIGH_BANDWIDTH_KEY_ID, BLE_ENABLE_HIGH_BANDWIDTH)
-        // Reset the module so that the data is overwritten
-        Reset(0)
-    ENDIF
-
-ENDFUNC 0
+dim rc
+dim priPhy,secPhy
 
 //==============================================================================
 // This handler is called when there is a scan attempt timeout
 //==============================================================================
 function HandlerBlrScanTimOut() as integer
-	print "\nScanning stopped via timeout"
+  print "\nScanning stopped via timeout"
 endfunc 1
 
 //==============================================================================
 // This handler is called when there is a BLE message
 //==============================================================================
 function HandlerBleMsg(BYVAL nMsgId AS INTEGER, BYVAL nCtx AS INTEGER) as integer
-	select nMsgId
-	case BLE_EVBLEMSGID_CONNECT
-		    print "\nSuccessfully connected"
-	case else
-	endselect
+  select nMsgId
+  case BLE_EVBLEMSGID_CONNECT
+        print "\nSuccessfully connected on LECODED phy"
+  case else
+  endselect
 endfunc 1
 
 //==============================================================================
 // This handler is called when there is an advert report waiting to be read
 //==============================================================================
 function HandlerAdvRpt() as integer
-	dim ad$,dta$,ndisc,rsi
-	rc = BleScanGetAdvReport(ad$,dta$,ndisc,rsi)
-	if rc==0 then
-		print "\nADV:";strhexize$(ad$);" ";strhexize$(dta$);" ";ndisc;" ";rsi
-		rc = BleConnect(ad$, 5000, 7500, 300000, 5000000)
-		if rc == 0 then
-			print "\nConnecting to ";strhexize$(ad$);" ..."
-		else
-			print "\nFailed to connect to device ";strhexize$(ad$);" with error code ";integer.h' rc
-		endif
-	endif
+  //This is not a long range advert so ignore
+endfunc 1
+
+//==============================================================================
+//==============================================================================
+sub PrintMetadata(metadata$)
+  dim val, chnl, dontcare$
+
+  val=BleExtRptMetadata(metadata$,1)
+  print "\n       :MD(sId=";val
+
+  val=BleExtRptMetadata(metadata$,2)
+  sprint #dontcare$, integer.h' val
+  print " dId=";right$(dontcare$,4)
+
+  priPhy=BleExtRptMetadata(metadata$,3)
+  print " pPhy=";priPhy
+
+  secPhy=BleExtRptMetadata(metadata$,4)
+  print " sPhy=";secPhy
+
+  chnl=BleExtRptMetadata(metadata$,5)
+  print " chn=";chnl
+
+  val=BleExtRptMetadata(metadata$,6)
+  if chnl<19 then
+    print "  txp=";val;")"
+  else
+    print  " txp=";val;")"
+  endif
+
+  //now print the status on a seperate line
+  val=BleExtRptMetadata(metadata$,7)
+  print "\n       :MD(status=";val;")"
+
+endsub
+
+//==============================================================================
+//==============================================================================
+function HndlrExtAdvRpt(byval ad$,byval dta$,rsi,byval metadata$) as integer
+  print "\nEXT ADV:";strhexize$(ad$);" AD:";strlen(dta$);":";strhexize$(dta$);" RS:";rsi
+  PrintMetadata(metadata$)
+
+  if (priPhy==BLE_GAP_CODED_PHY) && (secPhy==BLE_GAP_CODED_PHY) then
+    //only connect if both pri and sec phy were long range
+    rc = BleConnectExtended(ad$, CONNTIMEOUTMS, MINCONNINTUS, MAXCONNINTUS, SUPRVSNTOURUS, 1 , 0)
+    if rc == 0 then
+      print "\nConnecting to ";strhexize$(ad$);" ..."
+    else
+      print "\nFailed to connect to device ";strhexize$(ad$);" with error code ";integer.h' rc
+    endif
+  endif
+
 endfunc 1
 
 //******************************************************************************
 // Equivalent to main() in C
 //******************************************************************************
 
-// Enable high bandwidth
-rc = BleHighBandwidth()
-
-// Set Scanning PHYs to CODED PHY, enable extended scanning
-rc = BleScanConfig(4,BLE_GAP_CODED_PHY)
-rc = BleScanConfig(5,BLE_GAP_EXTENDED_SCANNING)
-// Set connection PHYs to CODED PHY, enable extended connection
-rc = BleConnectConfig(10,BLE_GAP_CODED_PHY)
-rc = BleConnectConfig(11,BLE_GAP_EXTENDED_SCANNING)
-
-// Start scanning
-rc = BleScanStart(10000, 0)
+//Start scanning for 1M and LE_CODED
+rc=BleScanStartEx(SCAN_TIMEOUT_MS, SCAN_PHYS_ALL, SCAN_CHAN_MASK, 0)
 if rc == 0 then
-	print "\nSuccessfully started scanning over CODED PHY"
-else 
-	print "\nFailed to scan with error code ";integer.h' rc
+  print "\nSuccessfully started scanning over 1M and CODED PHY"
+else
+  print "\nFailed to scan with error code ";integer.h' rc
 endif
 
 //------------------------------------------------------------------------------
@@ -136,6 +160,7 @@ endif
 //------------------------------------------------------------------------------
 OnEvent  EVBLE_SCAN_TIMEOUT       call HandlerBlrScanTimOut
 OnEvent  EVBLE_ADV_REPORT         call HandlerAdvRpt
+OnEvent  EVBLE_EXTADV_RPT         call HndlrExtAdvRpt
 OnEvent  EVBLEMSG                 call HandlerBleMsg
 
 //------------------------------------------------------------------------------

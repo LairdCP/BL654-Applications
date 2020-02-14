@@ -25,12 +25,12 @@
 //******************************************************************************
 
 //This is the target Bluetooth device to connect to, 7 bytes in hex
-#define BTAddr "000016A4B75404"
+#define BTAddr "000016A4B75202"
 
 //******************************************************************************
 // Definitions
 //******************************************************************************
-#define BLE_TX_PWOER                    8 // Possible values are 8, 7, 6, 5, 4, 3, 2, 0, -4, -8, -12, -16, -20, -40dBm
+#define BLE_TX_POWER                    8 // Possible values are 8, 7, 6, 5, 4, 3, 2, 0, -4, -8, -12, -16, -20, -40dBm
 
 #define BLE_1M_PHY                      1
 #define BLE_2M_PHY                      2
@@ -337,7 +337,7 @@ endfunc 1
 UartClose()
 rc = UartOpen(115200, 2048, 2048, "CN81H")
 
-rc=BleTxPowerSet(BLE_TX_PWOER)
+rc=BleTxPowerSet(BLE_TX_POWER)
 
 // Enable High bandwidth which is needed for CODED Phy
 rc = EnableHighBandwidth()
