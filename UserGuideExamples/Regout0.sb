@@ -1,0 +1,23 @@
+// Example: regout0
+
+DIM rc
+DIM mv
+DIM regOutIndex
+DIM tm
+
+mv = ReadPwrSupplyMv()
+PRINT "\n\nSupply voltage is ";mv;"mV\n"
+
+regOutIndex = GetRegout0()
+PRINT "\nRegout0 index is ";regOutIndex;"\n"
+
+PRINT "\nSetting Regout0 index to 2 (2.4V)\n"
+
+// Pause for 500ms to allow PRINT messages to send before SetRegout0() resets module
+tm = gettickcount()
+while (gettickcount()-tm) < 500
+    //Wait for 500 milliseconds
+endwhile
+
+rc = SetRegout0(2)
+PRINT "\nSetRegout0 returned ";rc;"\n"
