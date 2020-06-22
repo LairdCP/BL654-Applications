@@ -60,7 +60,8 @@
 // Compiler/Debug options
 //******************************************************************************
 //The following is the 'as-deployed' to customer setting
-#set $cmpif, 0x00960000 //see $LIB$.AT.interface.sb for bitmask description
+//#set $cmpif, 0x00960FFF //see $LIB$.AT.interface.sb for bitmask description
+#set $cmpif, 0x0096000F //see $LIB$.AT.interface.sb for bitmask description
 
 //******************************************************************************
 // Definitions

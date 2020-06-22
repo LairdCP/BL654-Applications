@@ -1,5 +1,5 @@
 --------
-Feb 2020
+Jun 2020
 --------
 
 This folder contains smartBASIC applications that when loaded in a BL65x 
@@ -70,9 +70,11 @@ DOCUMENTATION
 There are two main documents that are relevant for this application which
 can be found at
 
-  https://www.lairdtech.com/products/bl654-ble-thread-nfc-modules
+  https://www.lairdconnect.com/wireless-modules/bluetooth-modules/bluetooth-5-modules/bl654-series-bluetooth-module-nfc
   or
-  https://www.lairdtech.com/products/bl652-ble-module
+  https://www.lairdconnect.com/wireless-modules/bluetooth-modules/bluetooth-5-modules/bl652-series-bluetooth-v5-nfc-module
+  or
+  https://www.lairdconnect.com/wireless-modules/bluetooth-modules/bluetooth-5-modules/bl653-series-bluetooth-51-802154-nfc-module
   
    (1) BL65x AT Interface Application User Guide
    (2) AT Interface Quick Start Guide
