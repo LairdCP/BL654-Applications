@@ -11,7 +11,7 @@
 //******************************************************************************
 
 //Min & Max power capability
-#define MAX_TXPOWER_DBM                           8
+#define MAX_TXPOWER_DBM                           18
 #define MIN_TXPOWER_DBM                           -40
 
 #define DEFAULT_DEVICE_NAME                       "LAIRD BL654"
