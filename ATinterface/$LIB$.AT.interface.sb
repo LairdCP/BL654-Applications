@@ -39,7 +39,7 @@
 // -------------------
 // ATinterface Library Version
 // -------------------
-#define LibVer                 "3.11"  //Library version  (ATI23)
+#define LibVer                 "3.12"  //Library version  (ATI23)
 //
 //******************************************************************************
 // Compiler/Debug options
@@ -78,6 +78,9 @@
 // -------------------
 // Application History
 // -------------------
+//
+//  3.12
+//    * Fixed max TX power so BL654PA can be used at +18dBm
 //
 //  3.11
 //    * Fixed static passkey not being set properly
