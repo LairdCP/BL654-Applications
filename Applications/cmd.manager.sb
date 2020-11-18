@@ -665,6 +665,10 @@
 //MISC
 #define CAR_PRESS_DELAY                                 100  //ms to wait between registering entries of '^'
 
+//ERROR CODES
+#define ERROR_CODE_BLE_GATTC_NO_MORE_DATA               0x6052
+#define ERROR_CODE_BLE_EMPTY_SERVICE                    0x6096
+
 //******************************************************************************
 // Register Error Handler as early as possible
 //******************************************************************************
@@ -860,7 +864,7 @@ endfunc rc
 //==============================================================================
 sub TerminateTableMap(rc)
   gcState=0
-  if rc==0x6052 then
+  if rc==ERROR_CODE_BLE_GATTC_NO_MORE_DATA then
     //BLE_GATTC_NO_MORE_DATA
     rc=0
   endif
@@ -2515,7 +2519,13 @@ function HandlerPrimSvc(hConn,hUuid,hStart,hEnd) as integer
       print "\nS:";hStart;" ,(";hEnd;") ,";integer.h' hUuid
       //And get all characteristics of this service
       rc=BleDiscCharFirst(hConn,0,hStart,hEnd)
-      if rc!=0 then
+      if rc==ERROR_CODE_BLE_EMPTY_SERVICE then
+        //Service is empty, discover next service
+        rc = BleDiscServiceNext(hConn)
+        if rc!=0 then
+          TerminateTableMap(rc)
+        endif
+      elseif rc!=0 then
         TerminateTableMap(rc)
       endif
     else
