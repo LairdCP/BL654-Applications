@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017, Laird
+// Copyright (c) 2014-2020, Laird Connectivity
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -16,7 +16,7 @@
 //
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // +++++                                                                      ++
-// +++++  When UwTerminal downloads the app it will store it as a filenname   ++
+// +++++  When UwTerminalX downloads the app it will store it as a filenname  ++
 // +++++  which consists of all characters up to the first . and excluding it ++
 // +++++                                                                      ++
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -24,11 +24,14 @@
 // ---------------------
 //  Application Version 
 // ---------------------
-#define AppVer "1.01"
+#define AppVer "1.02"
 
 // ---------------------
 //  Application History
 // ---------------------
+//
+// 1.02 (15/12/2020):
+//       Updated to include new events/functions in firmware 29.5.7.2
 //
 // 1.01 (21/12/2017):
 //       Correct some commands wrongly treating integers as strings
@@ -397,6 +400,13 @@
 //    - Outputs the modules bluetooth low energy address
 //
 // -----------------------------------------------------------------------------
+// misc advaddress$ #INTadvset#
+//    - Outputs the modules bluetooth low energy address which is active for a
+//      particular advertising set (device must be advertising, this will
+//      display the active address which may be a private resolvable/non-
+//      resolvable address)
+//
+// -----------------------------------------------------------------------------
 // uart set #INTnewspeed#
 //    - changes the baud rate for communication with the device with immediate
 //      effect. Valid values are  9600, 14400, 19200, 38400, 57600, 115200,
@@ -467,7 +477,48 @@
 //    - This will result in BleSecMngrLescPairingPref() being called
 //    - valid values for #INTLESCPREF# are
 //         0     LESC pairing is not preferred
-//         1     LESC pairing is preferred
+//         1     LESC pairing is preferred (default)
+//
+// -----------------------------------------------------------------------------
+// ble pair authfail #INTAuthFailPref#
+//    - Security Manager related
+//    - This will change the action of an authorisation failure event
+//    - valid values for #INTAuthFailPref# are
+//         0     No disconnection will occur on authorisation failure
+//         1     Device will be disconnected on an authorisation failure (default)
+//
+// -----------------------------------------------------------------------------
+// ble pair pairconf #INTPairConfirmPref#
+//    - Security Manager related
+//    - This will change what causes a pairing confirmation event to occur, see
+//      the extensions manual for details on this bitmask value
+//
+// -----------------------------------------------------------------------------
+// ble pair bondover #INTconnHandle# #INToverwriteBond#
+//    - Security Manager related
+//    - This will result in BleOverwriteBond() being called
+//    - valid values for #INToverwriteBond# are
+//         0     Decline overwrite of bond details
+//         1     Accept overwrite of bond details
+//
+// -----------------------------------------------------------------------------
+// ble pair response #INTconnHandle# #INTaccept# #INTkeyexchange#
+//    - Security Manager related
+//    - This will result in BlePairingResponse() being called
+//    - valid values for #INTaccept#  are
+//         0     Decline pairing
+//         1     Accept pairing
+//    - See the extensions manual for details on the #INTkeyexchange# bitmask
+//      value
+//
+// -----------------------------------------------------------------------------
+// ble pair ex #INTconnHandle# #INTenablebonding# #INTkeyexchange#
+//    - Security Manager related
+//    - This will result in BlePair() being called and is used to
+//      initiate a pairing and if #INTenablebonding# is nonzero then a bonding
+//      will be performed which means the trusted device database will be updated
+//      #INTkeyexchange# should be set to 0 to use the default key exchange or
+//      may be customised to request exhanging only specific keys.
 //
 // -----------------------------------------------------------------------------
 // ble bond stats
@@ -501,7 +552,41 @@
 //
 // -----------------------------------------------------------------------------
 // ble phy
-//	  - Request a new PHY configuration or respond to a PHY change request
+//    - Request a new PHY configuration or respond to a PHY change request
+//
+// -----------------------------------------------------------------------------
+// ble chan set #HEXChannelMap#
+//    - Updates the channel map used by BLE to the specified channel map for
+//      future connections
+//
+// -----------------------------------------------------------------------------
+// ble chan get #INTconnHandle#
+//    - Returns the channel map which is active for a specific connection
+//
+// -----------------------------------------------------------------------------
+// ble connection addrfromhandle #INTconnHandle#
+//    - Returns the BLE address of an active connection given by the handle
+//
+// -----------------------------------------------------------------------------
+// ble connection handlefromaddr #HEXAddr#
+//    - Returns the handle of an active connection given by the BLE address
+//
+// -----------------------------------------------------------------------------
+// ble connection resolvedaddrfromhandle #INTconnHandle#
+//    - Returns the resolved BLE address of an active connection given by the
+//      handle, if the device is connected with a resolvable private address
+//      and a valid IRK entry exists in the bond database
+//
+// -----------------------------------------------------------------------------
+// ble connection handlefromresolvedaddr #HEXAddr#
+//    - Returns the handle of an active connection given by the resolved BLE
+//      address, if the device is connected with a resolvable private address
+//      and a valid IRK entry exists in the bond database
+//
+// -----------------------------------------------------------------------------
+// ble connection secinfo #INTconnHandle#
+//    - Returns the security information for an active connection given by the
+//      handle
 //
 // -----------------------------------------------------------------------------
 // scan abort
@@ -532,6 +617,10 @@
 // -----------------------------------------------------------------------------
 // txpower ?
 //   - get current tx power
+//
+// -----------------------------------------------------------------------------
+// txpower connection #INTconnHandle# #INTrole#
+//   - get connection tx power for specified role
 //
 // -----------------------------------------------------------------------------
 // uuid custom #HEX32hexChrs#
@@ -651,10 +740,14 @@
 #define BLE_EVBLEMSGID_POWER_FAILURE_WARNING            19   //msgCtx = current supply voltage
 #define BLE_EVBLEMSGID_UNENCRYPTED                      20   //msgCtx = connection handle
 #define BLE_EVBLEMSGID_DEVICENAME_WRITE                 21   //msgCtx = connection handle
-#define BLE_EVBLEMSGID_OOB_AVAILABLE_REQEST             25 // msgCtx = connection handle
-#define BLE_EVBLEMSGID_AUTHENTICATION_FAILED            26 // msgCtx = connection handle
-#define BLE_EVBLEMSGID_LESC_PAIRING                     27 // msgCtx = connection handle
-#define BLE_EVBLEMSGID_LESC_OOB_REQUEST                 28 // msgCtx = connection handle
+#define BLE_EVBLEMSGID_OOB_AVAILABLE_REQEST             25   //msgCtx = connection handle
+#define BLE_EVBLEMSGID_AUTHENTICATION_FAILED            26   //msgCtx = connection handle
+#define BLE_EVBLEMSGID_LESC_PAIRING                     27   //msgCtx = connection handle
+#define BLE_EVBLEMSGID_LESC_OOB_REQUEST                 28   //msgCtx = connection handle
+#define BLE_EVBLEMSGID_AUTHENTICATION_SUCCESSFUL        29   //msgCtx = connection handle
+#define BLE_EVBLEMSGID_CONFIRM_PAIRING                  30   //msgCtx = connection handle
+#define BLE_EVBLEMSGID_CONFIRM_TIMED_OUT                31   //msgCtx = connection handle
+
 
 
 //APP RUN MODES
@@ -960,21 +1053,42 @@ function HandlerSppDataCmd()
 endfunc 1
 
 //-------------------------------------------------------------------------
-//#CMD#// txpower = #INTdbm#       - set tx power to #INTdbm#
-//#CMD#// txpower ?                - get tx power
+//#CMD#// txpower = #INTdbm#                           - set tx power to #INTdbm#
+//#CMD#// txpower ?                                    - get tx power
+//#CMD#// txpower connection #INTconnHandle# #INTrole# - get tx power of connection in specified role
 //-------------------------------------------------------------------------
 function _TxPower()
-  rc = ParseSetQuery(i[1])
-  select rc
-  case 0
-    print "\nCurrent TxPower = ";SysInfo(2008)
-    rc=0
-  case -1
-    print "\nSet TxPower = ";i[1]
-    rc=BleTxPowerSet(i[1])
-  case else
-  endselect
-endfunc rc
+    tlen = ExtractStrToken(urtcmd$,tkn$)
+    if tlen == 0 then
+        exitfunc 5
+    endif
+
+    //=================================================
+    if strcmp(tkn$,"=")==0 then
+        print "\nSet TxPower = ";i[1]
+        exitfunc BleTxPowerSet(i[1])
+
+    //=================================================
+    elseif strcmp(tkn$,"?")==0 then
+        print "\nCurrent TxPower = ";SysInfo(2008)
+        exitfunc 0
+
+    //=================================================
+    elseif strcmp(tkn$,"connection")==0 then
+        //Extract 2 (#INTconnHandle# #INTrole#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        rc = BleTxPowerGet(i[2], hc[i[1]], i[3])
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        print "\nCurrent TxPower of role ";i[2];" in connection ";i[1];" = ";i[3]
+    endif
+endfunc 5
 
 //-------------------------------------------------------------------------
 //#CMD#// advert report initadv   #INTstridx# #INTadflags# #INTadappearance# #INTmaxdevname#
@@ -1741,6 +1855,11 @@ endfunc 5
 //#CMD#/   ble pair accept     #INTconnHandle# #INTaccept#
 //#CMD#/   ble pair oobpref    #INTprefoob#
 //#CMD#/   ble pair lesc       #INTLESCPref#
+//#CMD#/   ble pair authfail   #INTAuthFailPref#
+//#CMD#/   ble pair pairconf   #INTPairConfirmPref#
+//#CMD#/   ble pair bondover   #INTconnHandle# #INToverwriteBond#
+//#CMD#/   ble pair response   #INTconnHandle# #INTaccept# #INTkeyexchange#
+//#CMD#//  ble pair ex         #INTconnHandle# #INTenablebonding# #INTkeyexchange#
 //#CMD#//  ble pair            #INTconnHandle# #INTenablebonding#
 //-------------------------------------------------------------------------
 function _BlePair()
@@ -1804,6 +1923,7 @@ function _BlePair()
         if rc != 0 then
             exitfunc rc
         endif
+
         exitfunc BleSecMngrBondReq(i[1])
     endif
 
@@ -1814,6 +1934,7 @@ function _BlePair()
         if rc != 0 then
             exitfunc rc
         endif
+
         exitfunc BleAcceptPairing(hc[i[1]],i[2])
     endif
 
@@ -1824,19 +1945,76 @@ function _BlePair()
         if rc != 0 then
             exitfunc rc
         endif
-        exitfunc BLESECMNGROOBPREF(i[1])
 
+        exitfunc BLESECMNGROOBPREF(i[1])
     endif
 
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if strcmp(tkn$,"lesc")==0 then
         //extract 1 (#INTLESCPreferred#) and store starting at i[1]
         rc = ExtractIntTokens(urtcmd$,1,1)
         if rc != 0 then
             exitfunc rc
         endif
+
         exitfunc BleSecMngrLescPairingPref(i[1])
-	endif
+    endif
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if strcmp(tkn$,"authfail")==0 then
+        //extract 1 (#INTAuthFailPref#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        exitfunc BleSecMngrAuthFailPref(i[1])
+    endif
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if strcmp(tkn$,"pairconf")==0 then
+        //extract 1 (#INTPairConfirmPref#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        exitfunc BleSecMngrPairConf(i[1])
+    endif
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if strcmp(tkn$,"bondover")==0 then
+        //extract 2 (#INTconnHandle# #INToverwriteBond#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,2)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        exitfunc BleOverwriteBond(hc[i[1]], i[2])
+    endif
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if strcmp(tkn$,"response")==0 then
+        //extract 3 (#INTconnHandle# #INTaccept# #INTkeyexchange#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,3)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        exitfunc BlePairingResponse(hc[i[1]], i[2], i[3])
+    endif
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if strcmp(tkn$,"ex")==0 then
+        //extract 3 (#INTconnHandle# #INTenablebonding# #INTkeyexchange#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,3)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        exitfunc BlePairEx(hc[i[1]], i[2], i[3])
+    endif
+
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //Store the connection handle
     i[1] = StrValDec(tkn$)
@@ -1942,11 +2120,152 @@ function _BlePhy()
     exitfunc BlePhySet(hc[i[1]], i[2], i[3], 0)
 endfunc 5
 
+//------------------------------------------------------------------------------
+//#CMD#//  ble chan set   #HEXChannelMap#
+//#CMD#//  ble chan get   #INTconnHandle#
+//------------------------------------------------------------------------------
+function _BleChan()
+    tlen = ExtractStrToken(urtcmd$,tkn$)
+    if tlen == 0 then
+        exitfunc 5
+    endif
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if strcmp(tkn$,"set")==0 then
+        //Extract 1 (#HEXChannelMap#) and store starting at s$[1]
+        rc = ExtractStrTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        s$[1] = StrDehexize$(s$[1])
+
+        exitfunc BleChannelMap(s$[1])
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    elseif strcmp(tkn$,"get")==0 then
+        //Extract 1 (#INTconnHandle#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        rc = BleGetChannelMap(hc[i[1]], s$[1])
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        print "\n(";i[1];"): ";StrHexize$(s$[1])
+        exitfunc 0
+    endif
+endfunc 5
+
+//-------------------------------------------------------------------------
+//#CMD#//  ble connection addrfromhandle #INTconnHandle#
+//#CMD#//  ble connection handlefromaddr #HEXAddr#
+//#CMD#//  ble connection resolvedaddrfromhandle #INTconnHandle#
+//#CMD#//  ble connection handlefromresolvedaddr #HEXAddr#
+//#CMD#//  ble connection secinfo #INTconnHandle#
+//-------------------------------------------------------------------------
+function _BleConnection()
+    tlen = ExtractStrToken(urtcmd$,tkn$)
+    if tlen == 0 then
+        exitfunc 5
+    endif
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if strcmp(tkn$,"addrfromhandle")==0 then
+        //Extract 1 (#INTconnHandle#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        rc = BleGetAddrFromConnHandle(hc[i[1]], s$[1])
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        print "\n(";i[1];"): ";StrHexize$(s$[1])
+        exitfunc 0
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    elseif strcmp(tkn$,"handlefromaddr")==0 then
+        //Extract 1 (#HEXAddr#) and store starting at s$[1]
+        rc = ExtractStrTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        s$[1] = StrDehexize$(s$[1])
+
+        rc = BleGetConnHandleFromAddr(s$[1], i[1])
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        print "\n(";StrHexize$(s$[1]);"): ";GetConnHandle(i[1])
+        exitfunc 0
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    elseif strcmp(tkn$,"resolvedaddrfromhandle")==0 then
+        //Extract 1 (#INTconnHandle#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        rc = BleGetResolvedAddrFromConnHandle(hc[i[1]], s$[1])
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        print "\n(";i[1];"): ";StrHexize$(s$[1])
+        exitfunc 0
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    elseif strcmp(tkn$,"handlefromresolvedaddr")==0 then
+        //Extract 1 (#HEXAddr#) and store starting at s$[1]
+        rc = ExtractStrTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        s$[1] = StrDehexize$(s$[1])
+
+        rc = BleGetConnHandleFromResolvedAddr(s$[1], i[1])
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        print "\n(";StrHexize$(s$[1]);"): ";GetConnHandle(i[1])
+        exitfunc 0
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    elseif strcmp(tkn$,"secinfo")==0 then
+        //Extract 1 (#INTconnHandle#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        rc = BleGetCurConnSecInfo(hc[i[1]], i[2], i[3], i[4])
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        print "\n(";i[1];"): Flags = ";integer.h'i[2];", Security mode = ";i[3];", Security level = ";i[4]
+        exitfunc 0
+    endif
+endfunc 1
+
 //-------------------------------------------------------------------------
 //#CMD#//  ble bond
 //#CMD#//  ble pair
 //#CMD#//  ble encrypt
 //#CMD#//  ble phy
+//#CMD#//  ble chan
+//#CMD#//  ble connection
 //-------------------------------------------------------------------------
 function _Ble()
     tlen = ExtractStrToken(urtcmd$,tkn$)
@@ -1970,8 +2289,18 @@ function _Ble()
     endif
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	if strcmp(tkn$,"phy")==0 then
+    if strcmp(tkn$,"phy")==0 then
         exitfunc _BlePhy()
+    endif
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if strcmp(tkn$,"chan")==0 then
+        exitfunc _BleChan()
+    endif
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if strcmp(tkn$,"connection")==0 then
+        exitfunc _BleConnection()
     endif
 
 endfunc 5
@@ -1984,107 +2313,133 @@ endfunc 5
 //#CMD#//  misc i  clearall
 //#CMD#//  misc i  set #INTidx# #INTval#
 //#CMD#//  misc address
+//#CMD#//  misc advaddress$ #INTadvset#
 //-------------------------------------------------------------------------
 function _Misc()
-  tlen = ExtractStrToken(urtcmd$,tkn$)
-  if tlen == 0 then
-    exitfunc 5
-  endif
-  //=================================================
-  if strcmp(tkn$,"s$")==0 then
     tlen = ExtractStrToken(urtcmd$,tkn$)
     if tlen == 0 then
       exitfunc 5
     endif
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if strcmp(tkn$,"clearall")==0 then
-      exitfunc ClearS()
-    endif
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if strcmp(tkn$,"set")==0 then
-      //Extract 1 (#INTidx#) and store starting at i[1]
-      rc = ExtractIntTokens(urtcmd$,1,1)
-      if rc != 0 then
-        exitfunc rc
-      endif
-      if (i[1] < 0) || (i[1] >= NUM_OF_S_PARAMS) then
-        exitfunc 6
-      endif
-      //Extract 1 (#STRescapedvalue#) and store starting at s$[1]
-      rc = ExtractStrTokens(urtcmd$,i[1],1)
-      if rc != 0 then
-        exitfunc rc
-      endif
-      StrDeEscape(s$[i[1]])
-      exitfunc 0
-    endif
-  endif
-  //=================================================
-  if strcmp(tkn$,"sysinfo")==0 then
-    //extract 2 (#INTformat# #INTid#) and store starting at i[1]
-    rc = ExtractIntTokens(urtcmd$,1,2)
-    if rc != 0 then
-      exitfunc rc
-    endif
-    rc=sysinfo(i[2])
-    print "\n"
-    select i[1]
-    case 1 //octal
-      print integer.o' rc
-    case 2 //binary
-      print integer.b' rc
-    case 3 //hex
-      print integer.h' rc
-    case else  //decimal
-      print rc
-    endselect
-    exitfunc 0
-  endif
-  //=================================================
-  if strcmp(tkn$,"sysinfo$")==0 then
-    //extract 1 (#INTid#) and store starting at i[1]
-    rc = ExtractIntTokens(urtcmd$,1,1)
-    if rc != 0 then
-      exitfunc rc
-    endif
-    print "\n";sysinfo$(i[1])
-    exitfunc 0
-  endif
-  //=================================================
-  if strcmp(tkn$,"i")==0 then
-    tlen = ExtractStrToken(urtcmd$,tkn$)
-    if tlen == 0 then
-      exitfunc 5
-    endif
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if strcmp(tkn$,"clearall")==0 then
-      exitfunc ClearI()
-    endif
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if strcmp(tkn$,"set")==0 then
-      dim idx
-      tlen = ExtractIntToken(urtcmd$,idx)
-      if tlen == 0 then
-        exitfunc 5
-      endif
-      if (idx < 0) || (idx >= NUM_OF_I_PARAMS) then
-        exitfunc 6
-      endif
-      tlen = ExtractIntToken(urtcmd$,i[idx])
-      if tlen == 0 then
-        exitfunc 5
-      endif
-      exitfunc 0
-    endif
-  endif
-  //=================================================
-  if strcmp(tkn$,"address")==0 then
-    dim Tmp$ : Tmp$ = sysinfo$(4)
-    Tmp$ = strhexize$(Tmp$)
-    print "BLE Address: ";Tmp$;"\n"
-    exitfunc -2
-  endif
 
+    //=================================================
+    if strcmp(tkn$,"s$")==0 then
+        tlen = ExtractStrToken(urtcmd$,tkn$)
+        if tlen == 0 then
+            exitfunc 5
+        endif
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if strcmp(tkn$,"clearall")==0 then
+            exitfunc ClearS()
+        endif
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if strcmp(tkn$,"set")==0 then
+            //Extract 1 (#INTidx#) and store starting at i[1]
+            rc = ExtractIntTokens(urtcmd$,1,1)
+            if rc != 0 then
+                exitfunc rc
+            endif
+            if (i[1] < 0) || (i[1] >= NUM_OF_S_PARAMS) then
+                exitfunc 6
+            endif
+            //Extract 1 (#STRescapedvalue#) and store starting at s$[1]
+            rc = ExtractStrTokens(urtcmd$,i[1],1)
+            if rc != 0 then
+                exitfunc rc
+            endif
+            StrDeEscape(s$[i[1]])
+            exitfunc 0
+        endif
+    endif
+
+    //=================================================
+    if strcmp(tkn$,"sysinfo")==0 then
+        //extract 2 (#INTformat# #INTid#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,2)
+        if rc != 0 then
+            exitfunc rc
+        endif
+        rc=sysinfo(i[2])
+        print "\n"
+        select i[1]
+            case 1 //octal
+                print integer.o' rc
+            case 2 //binary
+                print integer.b' rc
+            case 3 //hex
+                print integer.h' rc
+            case else  //decimal
+                print rc
+        endselect
+        exitfunc 0
+    endif
+
+    //=================================================
+    if strcmp(tkn$,"sysinfo$")==0 then
+        //extract 1 (#INTid#) and store starting at i[1]
+        rc = ExtractIntTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+        print "\n";sysinfo$(i[1])
+        exitfunc 0
+    endif
+
+    //=================================================
+    if strcmp(tkn$,"i")==0 then
+        tlen = ExtractStrToken(urtcmd$,tkn$)
+        if tlen == 0 then
+            exitfunc 5
+        endif
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if strcmp(tkn$,"clearall")==0 then
+            exitfunc ClearI()
+        endif
+
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        if strcmp(tkn$,"set")==0 then
+            dim idx
+            tlen = ExtractIntToken(urtcmd$,idx)
+            if tlen == 0 then
+                exitfunc 5
+            endif
+            if (idx < 0) || (idx >= NUM_OF_I_PARAMS) then
+                exitfunc 6
+            endif
+            tlen = ExtractIntToken(urtcmd$,i[idx])
+            if tlen == 0 then
+                exitfunc 5
+            endif
+            exitfunc 0
+        endif
+    endif
+
+    //=================================================
+    if strcmp(tkn$,"address")==0 then
+        dim Tmp$ : Tmp$ = sysinfo$(4)
+        Tmp$ = strhexize$(Tmp$)
+        print "BLE Address: ";Tmp$;"\n"
+        exitfunc -2
+    endif
+
+    //=================================================
+    if strcmp(tkn$,"advaddress$")==0 then
+        rc = ExtractIntTokens(urtcmd$,1,1)
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        rc = BleGetAdvertisingAddress$(i[1], s$[1])
+
+        if rc != 0 then
+            exitfunc rc
+        endif
+
+        print "Advertising set ";i[1];" BLE Address: ";strhexize$(s$[1]);"\n"
+        exitfunc -2
+    endif
 endfunc 5
 
 //-------------------------------------------------------------------------
@@ -2415,9 +2770,6 @@ function HandlerBleMsg(BYVAL nMsgId AS INTEGER, BYVAL nCtx AS INTEGER) as intege
     conns = conns - 1
     print "\n --- Disconnect: (";integer.h' nCtx;") handle=";hz;pr$
 
-  case BLE_EVBLEMSGID_DISPLAY_PASSKEY
-    DbgMsgVal("Display Pairing Passkey ",nCtx)
-
   case BLE_EVBLEMSGID_NEW_BOND
     DbgMsg(" +++ New Bond")
 
@@ -2430,10 +2782,7 @@ function HandlerBleMsg(BYVAL nMsgId AS INTEGER, BYVAL nCtx AS INTEGER) as intege
   case BLE_EVBLEMSGID_CONN_TO_BONDED_MASTER
     DbgMsgVal(" -- Conn to Bonded Master ",nCtx)
 
-  case BLE_EVBLEMSGID_AUTH_KEY_REQUEST
-    DbgMsgVal(" +++ Auth Key Request, type=",nCtx)
-
-  case   BLE_EVBLEMSGID_AUTHENTICATION_FAILED
+  case BLE_EVBLEMSGID_AUTHENTICATION_FAILED
     DbgMsgVal(" +++ Auth Failed ", nCtx)
 
   case BLE_EVBLEMSGID_CONN_PARMS_UPDATE
@@ -2447,6 +2796,16 @@ function HandlerBleMsg(BYVAL nMsgId AS INTEGER, BYVAL nCtx AS INTEGER) as intege
 
   case BLE_EVBLEMSGID_CONN_PARMS_UPDATE_FAIL
     DbgMsg(" ??? Conn Parm Negotiation FAILED")
+
+  case BLE_EVBLEMSGID_AUTHENTICATION_SUCCESSFUL
+    DbgMsgVal(" +++ Auth Successful ", nCtx)
+
+  case BLE_EVBLEMSGID_CONFIRM_PAIRING
+    rc = BlePairingInfo(nCtx, i[1], i[2], i[3], i[4], i[5], i[6])
+    print "\nConfirm Pairing, Handle = ";GetConnHandle(nCtx);", Initator = ";i[1];", Flags = ";integer.h'i[2];", IOCap = ";i[3];", MinKeySize = ";i[4];", MaxKeySize = ";i[5];", KeyExchange = ";integer.h'i[6]
+
+  case BLE_EVBLEMSGID_CONFIRM_TIMED_OUT
+    DbgMsgVal(" +++ Pairing confirmation timed out ", nCtx)
 
   case else
     DbgMsgVal("Unknown Ble Msg", nMsgId)
@@ -2777,9 +3136,9 @@ endfunc 1
 // This handler is called when the BLE PHY is changed
 //==============================================================================
 function  HandlerPhyChngd(BYVAL hConn, BYVAL nStatus, BYVAL PhyTx, BYVAL PhyRx)
-	print "BLE PHY CHANGED: \n"
+    print "BLE PHY CHANGED: \n"
     print "Handle: ";integer.h' hConn;"\n"
-	print "Status: ";integer.h' nStatus;"\n"
+    print "Status: ";integer.h' nStatus;"\n"
     print "PhyTx=";PhyTx;" PhyRx =";PhyRx;"\n"
 endfunc 1
 
@@ -2790,6 +3149,73 @@ function  HandlerPhyReq(BYVAL hConn, BYVAL PhyTx, BYVAL PhyRx)
     print "BLE PHY REQUEST: \n"
     print "Handle: ";integer.h' hConn;"\n"
     print "PhyTx=";PhyTx;" PhyRx =";PhyRx;"\n"
+endfunc 1
+
+//==============================================================================
+// This handler is called when there is a passkey/numerical compare event
+//==============================================================================
+function HandlerBlePasskey(BYVAL Conn, BYVAL Passkey, BYVAL Flags)
+    if (Flags == 0) then
+        //This is a passkey
+        PRINT "\n +++ Pass Key Request (NOT Numerical Comparison), Handle: ";integer.h'Conn;", Key: ";Passkey
+    elseif (Flags == 1) then
+        //This is a numerical comparison
+        PRINT "\n +++ Numerical Comparison Request (NOT Pass key), Handle: ";integer.h'Conn;", Comparison: ";Passkey
+    else
+        PRINT "\n +++ Unknown Pass Key Request, Handle: ";integer.h'Conn;", Type: ";Flags;", Value: ";Passkey
+    endif
+endfunc 1
+
+//==============================================================================
+// This handler is called when there is an authkey request event
+//==============================================================================
+function HandlerBleAuthkey(BYVAL Conn, BYVAL Type, BYVAL Flags)
+    PRINT "\n +++ Auth Key Request, Handle: ";integer.h'Conn;", Type: ";Type
+endfunc 1
+
+//==============================================================================
+// This handler is called when the BLE packet length has been limited
+//==============================================================================
+function HandlerBlePacketLengthLimited(BYVAL Conn, BYVAL TxRxTimeReducedBy, BYVAL TxSizeReducedBy, BYVAL RxSizeReducedBy)
+    PRINT "\n +++ Packet Length Limited, Handle: ";integer.h'Conn;", TxRxTimeReducedBy: ";TxRxTimeReducedBy;"ms, TxSizeReducedBy: ";TxSizeReducedBy;" bytes, RxSizeReducedBy: ";RxSizeReducedBy;" bytes"
+endfunc 1
+
+//==============================================================================
+// This handler is called when the BLE Tx power has been limited (PALNA only)
+//==============================================================================
+function HandlerBleTxPowerLimited(BYVAL Conn, BYVAL TxPower)
+    PRINT "\n +++ Tx Power Limited, Handle: ";integer.h'Conn;", Power: ";TxPower;"dBm"
+endfunc 1
+
+//==============================================================================
+// This handler is called when authorisation has been successful or failed and
+// contains details on it
+//==============================================================================
+function HandlerBleAuthInfo(BYVAL Conn, BYVAL Code, BYVAL Source, BYVAL Flags, BYVAL KeyExchange, BYVAL SecurityModeLevels)
+    if (Code == 0) then
+        //Success
+        PRINT "\n +++ Authorisation was successful, Handle: ";integer.h'Conn;", Flags: ";integer.h'Flags;", KeyExchange: ";integer.h'KeyExchange;", SecurityModeLevels: ";integer.h'SecurityModeLevels
+    else
+        //Failure
+        PRINT "\n +++ Authorisation failed, Handle: ";integer.h'Conn;", Code: ";Code;", Source: ";Source
+    endif
+endfunc 1
+
+//==============================================================================
+// This handler is called when a connected peripheral device sends a security
+// request message to the central device
+//==============================================================================
+function HandlerBleSecurityRequest(BYVAL Conn, BYVAL Flags)
+    PRINT "\n +++ Security Request, Handle: ";integer.h'Conn;", Flags: ";integer.h'Flags
+endfunc 1
+
+//==============================================================================
+// This handler is called when a device attempts to bond with a private
+// resolvable/non-resolvable address and overwrite an existing bond of a
+// public/random address
+//==============================================================================
+function HandlerBleOverwriteBond(BYVAL Conn, BYVAL Flags, BYVAL Address$)
+    PRINT "\n +++ Bond overwrite attempt during bonding, Handle: ";integer.h'Conn;", Flags: ";integer.h'Flags;", Address: ";strhexize$(Address$)
 endfunc 1
 
 //******************************************************************************
@@ -2825,10 +3251,18 @@ OnEvent  EVCHARCCCD               call HandlerCharCccd
 OnEvent  EVCHARSCCD               call HandlerCharSccd
 OnEvent  EVCHARDESC               call HandlerCharDesc
 
-OnEvent  EVBLE_PHY_UPDATED	 	   call HandlerPhyChngd
-OnEvent  EVBLE_PHY_REQUEST		   call HandlerPhyReq
+OnEvent  EVBLE_PHY_UPDATED        call HandlerPhyChngd
+OnEvent  EVBLE_PHY_REQUEST        call HandlerPhyReq
 
+OnEvent  EVBLE_PASSKEY            call HandlerBlePasskey
+OnEvent  EVBLE_AUTHKEY            call HandlerBleAuthkey
 
+OnEvent  EVPACKETLENGTHLIMITED    call HandlerBlePacketLengthLimited
+OnEvent  EVTXPOWERLIMITED         call HandlerBleTxPowerLimited
+
+OnEvent  EVBLEAUTHINFO            call HandlerBleAuthInfo
+OnEvent  EVBLESECREQUEST          call HandlerBleSecurityRequest
+OnEvent  EVBLEOVERWRITEBOND       call HandlerBleOverwriteBond
 
 //OnEvent  EVGPIOCHAN0              call HandlerSio28
 OnEvent  EVMSGAPP                 call SetMode
