@@ -75,6 +75,7 @@ AssertRC(rc, 74)
 
 //Start advertising over BLE
 if BleAdvertStart(0, addr$, 250, 60000, 0) == 0 then
+    addr$ = sysinfo$(4)
     print "Adverts Started - connect to device named: ";BleGetDeviceName$();", address: ";strhexize$(addr$);"\n"
 else
     AssertRC(rc, 80)
