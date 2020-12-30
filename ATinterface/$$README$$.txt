@@ -1,5 +1,5 @@
 --------
-Jun 2020
+Jan 2021
 --------
 
 This folder contains smartBASIC applications that when loaded in a BL65x 
@@ -14,9 +14,9 @@ if there was a wired uart connection.
      ==============================================================
      The minimum firmware version that you will need is as follows:
      
-                             BL652 : v28.10.7.0
-                             BL653 : v30.1.0.1
-                             BL654 : v29.4.6.0
+                             BL652 : N/A (next release)
+                             BL653 : v30.2.2.0
+                             BL654 : v29.4.7.2
           
       The command 'AT I 3<cr>' will return the version number from
       the module
