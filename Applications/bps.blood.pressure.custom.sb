@@ -218,8 +218,6 @@
 #define BLE_EVBLEMSGID_CONNECT                      0   //msgCtx = connection handle
 #define BLE_EVBLEMSGID_DISCONNECT                   1   //msgCtx = connection handle
 #define BLE_EVBLEMSGID_SERVICE_ERROR                4   //msgCtx = resultcode
-#define BLE_EVBLEMSGID_BPS_INDICATION_STATE         7   //msgCtx = new indication state 0=off, 1=on
-#define BLE_EVBLEMSGID_BPS_INDICATION_CNF           8   //msgCtx = not used
 #define BLE_EVBLEMSGID_NEW_BOND                     10  //msgCtx = connection handle
 #define BLE_EVBLEMSGID_CONN_PARMS_UPDATE            14  //msgCtx = connection handle
 #define BLE_EVBLEMSGID_CONN_PARMS_UPDATE_FAIL       15  //msgCtx = connection handle
@@ -1383,16 +1381,6 @@ function HandlerBleMsg(BYVAL nMsgId AS INTEGER, BYVAL nCtx AS INTEGER) as intege
 
   case BLE_EVBLEMSGID_DISCONNECT
     DbgMsgVal(" --- Disconnect : ",nCtx)
-
-  //case BLE_EVBLEMSGID_BPS_INDICATION_STATE
-  //  DbgMsgVal(" +++ BPS IND STATE = ",nCtx)
-    //if nCtx == 1 then
-      //Indications have been enabled
-    //endif
-
-  //case BLE_EVBLEMSGID_BPS_INDICATION_CNF
-  //  DbgMsg(" +++ BPS IND CNF")
-    //Can send next measurement data
 
   case BLE_EVBLEMSGID_NEW_BOND
     DbgMsg(" +++ New Bond")

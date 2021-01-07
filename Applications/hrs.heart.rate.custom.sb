@@ -215,7 +215,6 @@
 #define BLE_EVBLEMSGID_DISCONNECT                         1   //msgCtx = connection handle
 #define BLE_EVBLEMSGID_SERVICE_ERROR                      4   //msgCtx = resultcode
 #define BLE_EVBLEMSGID_NEW_BOND                           10  //msgCtx = connection handle
-#define BLE_EVBLEMSGID_HRS_NOTIFICATION_STATE             12  //msgCtx = new notification state 0=off, 1=on
 #define BLE_EVBLEMSGID_CONN_PARMS_UPDATE                  14  //msgCtx = connection handle
 #define BLE_EVBLEMSGID_CONN_PARMS_UPDATE_FAIL             15  //msgCtx = connection handle
 #define BLE_EVBLEMSGID_CONN_TO_BONDED_MASTER              16  //msgCtx = connection handle
@@ -1357,9 +1356,6 @@ function HandlerBleMsg(BYVAL nMsgId AS INTEGER, BYVAL nCtx AS INTEGER) as intege
 
   case BLE_EVBLEMSGID_DISCONNECT
     DbgMsgVal(" --- Disconnect : ",nCtx)
-
-  //case BLE_EVBLEMSGID_HRS_NOTIFICATION_STATE
-  //  DbgMsgVal(" --- Hrs Notification : ",nCtx)
 
   case BLE_EVBLEMSGID_DEVICENAME_WRITE
     DbgMsg(" --- DevName Write : ")
