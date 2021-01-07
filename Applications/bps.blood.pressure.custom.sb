@@ -1582,6 +1582,9 @@ UartMsg(msg$)
 //Send an OK response
 UartRsp(0)
 
+//Disable all pairing confirmation, this allows any device to bond even if an existing bond exists without confirmation as this is a sample application only. This behavior should not exist in real life/world applications
+rc = BleSecMngrPairConf(0)
+
 //------------------------------------------------------------------------------
 // Wait for a synchronous event.
 // An application can have multiple <WaitEvent> statements
