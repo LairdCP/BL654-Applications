@@ -274,10 +274,7 @@ ENDFUNC 1
 #define BLE_EVBLEMSGID_CONNECT                  0   //nCtx = connection handle
 #define BLE_EVBLEMSGID_DISCONNECT               1   //nCtx = connection handle
 #define BLE_EVBLEMSGID_SERVICE_ERROR            4   //nCtx = resultcode
-#define BLE_EVBLEMSGID_DISPLAY_PASSKEY          9   //nCtx = passcode to display
 #define BLE_EVBLEMSGID_NEW_BOND                 10  //nCtx = connection handle
-#define BLE_EVBLEMSGID_AUTH_KEY_REQUEST         11  //nCtx = 1 for passkey, 2 for 16 byte OOB data
-#define BLE_EVBLEMSGID_HRS_NOTIFICATION_STATE   12  //nCtx = new notification state 0=off, 1=on
 #define BLE_EVBLEMSGID_CONN_PARMS_UPDATE        14  //nCtx = connection handle
 #define BLE_EVBLEMSGID_CONN_PARMS_UPDATE_FAIL   15  //nCtx = connection handle
 #define BLE_EVBLEMSGID_CONN_TO_BONDED_MASTER    16  //nCtx = connection handle

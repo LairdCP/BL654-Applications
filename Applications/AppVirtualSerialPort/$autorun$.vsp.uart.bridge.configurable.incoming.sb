@@ -1252,10 +1252,7 @@ endfunc 1
 #define BLE_EVBLEMSGID_CONNECT                  0   //nCtx = connection handle
 #define BLE_EVBLEMSGID_DISCONNECT               1   //nCtx = connection handle
 #define BLE_EVBLEMSGID_SERVICE_ERROR            4   //nCtx = resultcode
-#define BLE_EVBLEMSGID_DISPLAY_PASSKEY          9   //nCtx = passcode to display
 #define BLE_EVBLEMSGID_NEW_BOND                 10  //nCtx = connection handle
-#define BLE_EVBLEMSGID_AUTH_KEY_REQUEST         11  //nCtx = 1 for passkey, 2 for 16 byte OOB data
-#define BLE_EVBLEMSGID_HRS_NOTIFICATION_STATE   12  //nCtx = new notification state 0=off, 1=on
 #define BLE_EVBLEMSGID_CONN_PARMS_UPDATE        14  //nCtx = connection handle
 #define BLE_EVBLEMSGID_CONN_PARMS_UPDATE_FAIL   15  //nCtx = connection handle
 #define BLE_EVBLEMSGID_CONN_TO_BONDED_MASTER    16  //nCtx = connection handle
@@ -1335,9 +1332,6 @@ function HndlrBleMsg(nMsgId, nCtx)
             GPIOWrite(ENCRPin, 1)
         endif
 
-    #cmpif 0x80000000 : case BLE_EVBLEMSGID_DISPLAY_PASSKEY
-    #cmpif 0x80000000 :     DbgMsgVal("Display Pairing Passkey ",nCtx)
-
     #cmpif 0x80000000 : case BLE_EVBLEMSGID_NEW_BOND
     #cmpif 0x80000000 :     DbgMsg("New Bond")
 
@@ -1346,9 +1340,6 @@ function HndlrBleMsg(nMsgId, nCtx)
 
     #cmpif 0x80000000 : case BLE_EVBLEMSGID_CONN_TO_BONDED_MASTER
     #cmpif 0x80000000 :     DbgMsg("Conn to Bonded Master ")
-
-    #cmpif 0x80000000 : case BLE_EVBLEMSGID_AUTH_KEY_REQUEST
-    #cmpif 0x80000000 :     DbgMsgVal("Auth Key Request, type=",nCtx)
 
     #cmpif 0x80000000 : case BLE_EVBLEMSGID_CONN_PARMS_UPDATE
     #cmpif 0x80000000 :     ShowConnParms()
@@ -2049,11 +2040,34 @@ endif
 CreateAdverts()
 StartAdvertising()
 
+//==============================================================================
+// This handler is called when there is a passkey/numerical compare event
+//==============================================================================
+#cmpif 0x80000000 : function HndlrBlePasskey(BYVAL Conn, BYVAL Passkey, BYVAL Flags)
+#cmpif 0x80000000 :     if (Flags == 0) then
+#cmpif 0x80000000 :         //This is a passkey
+#cmpif 0x80000000 :         PRINT "Pass Key Request (NOT Numerical Comparison), Handle: ";integer.h'Conn;", Key: ";Passkey;"\n"
+#cmpif 0x80000000 :     elseif (Flags == 1) then
+#cmpif 0x80000000 :         //This is a numerical comparison
+#cmpif 0x80000000 :         PRINT "Numerical Comparison Request (NOT Pass key), Handle: ";integer.h'Conn;", Key: ";Passkey;"\n"
+#cmpif 0x80000000 :     else
+#cmpif 0x80000000 :         PRINT "Unknown Pass Key Request, Handle: ";integer.h'Conn;", Type: ";Flags;" Value: ";Passkey;"\n"
+#cmpif 0x80000000 :     endif
+#cmpif 0x80000000 : endfunc 1
+
+//==============================================================================
+// This handler is called when there is an authkey request event
+//==============================================================================
+#cmpif 0x80000000 : function HndlrBleAuthkey(BYVAL Conn, BYVAL Type, BYVAL Flags)
+#cmpif 0x80000000 :     PRINT "Auth Key Request, Handle: ";integer.h'Conn;", Type: ";Type;"\n"
+#cmpif 0x80000000 : endfunc 1
 
 //******************************************************************************
 //Setup event handlers
 //******************************************************************************
 ONEVENT EVBLEMSG CALL HndlrBleMsg
+#cmpif 0x80000000 : ONEVENT EVBLE_PASSKEY CALL HndlrBlePasskey
+#cmpif 0x80000000 : ONEVENT EVBLE_AUTHKEY CALL HndlrBleAuthkey
 
 //Set up uart/vsp handlers depending on mode
 if (ApplicationError == 0) then
