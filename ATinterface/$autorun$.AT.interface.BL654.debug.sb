@@ -36,11 +36,14 @@
 // -------------------
 // Application Version
 // -------------------
-#define AppVer                 "4.00"  //Application version (ATI33)
+#define AppVer                 "4.01"  //Application version (ATI33)
 //
 // -------------------
 // Application History
 // -------------------
+//
+//  4.01
+//    Fixed issue with upper case characters not being made lower case properly
 //
 //  4.00
 //    Fixed issue with receive buffer becoming full without a newline character and preventing module operating

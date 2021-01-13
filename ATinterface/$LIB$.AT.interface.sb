@@ -39,7 +39,7 @@
 // -------------------
 // ATinterface Library Version
 // -------------------
-#define LibVer                 "4.00"  //Library version  (ATI23)
+#define LibVer                 "4.01"  //Library version  (ATI23)
 //
 //******************************************************************************
 // Compiler/Debug options
@@ -78,6 +78,9 @@
 // -------------------
 // Application History
 // -------------------
+//
+//  4.01
+//    * Fixed issue with upper case characters not being made lower case properly
 //
 //  4.00
 //    * Fixed issue with receive buffer becoming full without a newline character and preventing module operating
@@ -200,7 +203,7 @@
 #define CHR_ASCII_UPPER_A                           0x41
 #define CHR_ASCII_UPPER_L                           0x4C
 #define CHR_ASCII_UPPER_Z                           0x5A
-#define ASCII_LOWER_TO_UPPER_DIFFERENCE             0x14
+#define ASCII_LOWER_TO_UPPER_DIFFERENCE             0x20
 
 //Invalid connection handle
 #define INVALID_CONN_HANDLE                         0
