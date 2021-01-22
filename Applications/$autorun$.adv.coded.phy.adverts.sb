@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Laird
+// Copyright (c) 2021, Laird Connectivity
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -62,43 +62,44 @@ dim advRpt$, scnRpt$
 //==============================================================================
 // This handler is called when adverts started with new api has ended
 //==============================================================================
-function HndlrExtAdvEnd(setid,reason) as integer
-  print "\n\nAdverts ended on set ";setid;" - ";
-  if reason==0 then
-    print "Timeout"
-  else
-    print "Limit, adverts sent ";reason
-  endif
-  print "\nReset module to restart";
+function HndlrExtAdvEnd(setid, reason) as integer
+    print "\n\nAdverts ended on set ";setid;" - ";
+    if reason==0 then
+        print "Timeout"
+    else
+        print "Limit, adverts sent ";reason
+    endif
+    print "\nReset module to restart";
 endfunc 1
 
 OnEvent  EVBLE_EXTADV_END         call HndlrExtAdvEnd
 
 //create default advert and scan report
-rc=BleAdvRptInit(advRpt$,AD_FLAG_GENERAL_AVAILABILITY,AD_APPEARANCE,AD_MAXDEVICNAMELEN)
-if rc!=0 then
-  print "\n## BleAdvRptInit error = ";integer.h' rc
+rc = BleAdvRptInit(advRpt$, AD_FLAG_GENERAL_AVAILABILITY, AD_APPEARANCE, AD_MAXDEVICNAMELEN)
+if rc != 0 then
+    print "\n## BleAdvRptInit error = ";integer.h' rc
 endif
-rc=BleScanRptInit(scnRpt$)
-if rc!=0 then
-  print "\n## BleScanRptInit error = ";integer.h' rc
+
+rc = BleScanRptInit(scnRpt$)
+if rc != 0 then
+    print "\n## BleScanRptInit error = ";integer.h' rc
 endif
 
 //create advert set
 peeraddr$=""
-rc=BleAdvSetCreate(ADV_SET_ID,ADV_PROP,ADV_PRI_SEC_PHY,0,peeraddr$,"")
-if rc!=0 then
-  print "\n## BleAdvSetCreate error = ";integer.h' rc
+rc = BleAdvSetCreate(ADV_SET_ID, ADV_PROP, ADV_PRI_SEC_PHY, 0, peeraddr$, "")
+if rc != 0 then
+    print "\n## BleAdvSetCreate error = ";integer.h' rc
 endif
 
 //Attach adv report and empty scan report to data set
-rc=BleAdvSetNewData(ADV_SET_ID,advRpt$,scnRpt$)
-if rc!=0 then
-  print "\n## BleAdvSetNewData error = ";integer.h' rc
+rc = BleAdvSetNewData(ADV_SET_ID, advRpt$, scnRpt$)
+if rc != 0 then
+    print "\n## BleAdvSetNewData error = ";integer.h' rc
 endif
 
 //start advertising
-rc=BleAdvSetStart(ADV_SET_ID, ADV_INTERVAL_MS, ADV_DURATION_MS, ADV_MAXCOUNT, ADV_AUXOFFSET)
+rc = BleAdvSetStart(ADV_SET_ID, ADV_INTERVAL_MS, ADV_DURATION_MS, ADV_MAXCOUNT, ADV_AUXOFFSET)
 if rc == 0 then
   print "\nSuccessfully started advertising over CODED PHY"
 else
@@ -109,5 +110,3 @@ endif
 // Wait for a synchronous event.
 //------------------------------------------------------------------------------
 WaitEvent
-
-

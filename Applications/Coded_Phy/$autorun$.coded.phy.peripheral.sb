@@ -1,5 +1,5 @@
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Copyright (c) 2016, Laird                                                  ++
+// Copyright (c) 2021, Laird Connectivity                                     ++
 //                                                                            ++
 // Permission to use, copy, modify, and/or distribute this software for any   ++
 // purpose with or without fee is hereby granted, provided that the above     ++
@@ -56,7 +56,6 @@ dim UartData$                       // Data from the UART waiting to be sent out
 dim nBleMaxPacketLength : nBleMaxPacketLength = 27  //Default maximum packet length on BL654
 dim nAttributeMTU       : nAttributeMTU = 23        //Default Maximum Transmission Unit on BL654
 dim nAttributeLength    : nAttributeLength = 20     //Default Attribute Data Length on BL654
-dim nHighBandwidth      : nHighBandwidth = 0        //Default configuration, 1=High, 0=Low
 
 //******************************************************************************
 // Initialise Global Variable
@@ -85,30 +84,33 @@ sub AssertRC(rc, tag)
 endsub
 
 //-------------------------------------------------------------------------------
-// Definitions for attribute values to achieve higher bandwidth needed for CODED PHY
-#define USE_STRINT_IN_EVENTS_KEY_ID             213    // CFG ID 213
-#define ENABLE_HIGH_BANDWIDTH_KEY_ID            214    // CFG ID 214
+// Definitions for attribute values
+#define USE_STRING_IN_EVENTS_KEY_ID              213    // CFG ID 213
 
-#define USE_STRING_IN_EVENTS                    1   // 0: use EVATTRNOTIFY, 1: use EVATTRNOTIFYEX (See user manual)
-#define BLE_ENABLE_HIGH_BANDWIDTH               1      // 0: Normal Bandwidth (default), 1: High Bandwidth
+#define USE_STRING_IN_EVENTS                     1      // 0: use EVATTRNOTIFY, 1: use EVATTRNOTIFYEX (See user manual)
 
 //-------------------------------------------------------------------------------
-// This function is to enable the High Bandwidth configuration in order to achieve the long range
+// This function updates module configuration
 //-------------------------------------------------------------------------------
-FUNCTION EnableHighBandwidth()
-    // Get High bandwidth value
-    rc = NvCfgKeyGet(ENABLE_HIGH_BANDWIDTH_KEY_ID, nHighBandwidth)
+FUNCTION UpdateConfiguration()
+    dim UseStringsInEvents
 
-     // Check if we are in the high bandwidth configuration
-    IF  (nHighBandwidth != BLE_ENABLE_HIGH_BANDWIDTH) THEN
+    // Get current configuration values
+    rc = NvCfgKeyGet(USE_STRING_IN_EVENTS_KEY_ID, UseStringsInEvents)
+    AssertRC(rc, 100)
+
+    IF (UseStringsInEvents != USE_STRING_IN_EVENTS) THEN
         // Allow data to be thrown in messages (i.e. Use EVATTRNOTIFYEX instead of EVATTRNOTIFY)
-        rc = NvCfgKeySet(USE_STRINT_IN_EVENTS_KEY_ID, USE_STRING_IN_EVENTS)
-        // Change the bandwidth configuration to HIGH (6 packets per interval)
-        rc = NvCfgKeySet(ENABLE_HIGH_BANDWIDTH_KEY_ID, BLE_ENABLE_HIGH_BANDWIDTH)
-        // Reset the module so that the data is overwritten
-        Reset(0)
-    ENDIF
+        rc = NvCfgKeySet(USE_STRING_IN_EVENTS_KEY_ID, USE_STRING_IN_EVENTS)
+        AssertRC(rc, 105)
 
+        IF (rc != 0) THEN
+            PRINT "\n## Module configuration upgrade failed - Application in-operable"
+        ELSE
+            // Reset the module so that the data is overwritten
+            Reset(0)
+        ENDIF
+    ENDIF
 ENDFUNC 0
 
 //------------------------------------------------------------------------------
@@ -325,8 +327,8 @@ rc = UartOpen(115200, 2048, 2048, "CN81H")
 
 rc=BleTxPowerSet(BLE_TX_POWER)
 
-// Enable High bandwidth which is needed for CODED Phy
-rc = EnableHighBandwidth()
+// Update module configuration
+rc = UpdateConfiguration()
 
 // Setup VSP service
 rc = CreateVSPService()
