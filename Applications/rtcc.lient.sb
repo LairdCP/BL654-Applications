@@ -1,4 +1,4 @@
-// Copyright (c) 2016, Laird
+// Copyright (c) 2021, Laird Connectivity
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -298,7 +298,7 @@ ENDFUNC 1
 FUNCTION IsConnected()
     //Returns a message if not connected to the device
     IF ConnectionStatus == 0 THEN
-        PRINT "Error: you must be connected to the target BL652/BL654/BT900 to use this function.\n"
+        PRINT "Error: you must be connected to the target BL652/BL653/BL654/BT900 to use this function.\n"
         EXITFUNC 2
     ENDIF
 ENDFUNC 1
@@ -637,7 +637,7 @@ FUNCTION HndlrGCData(nCtx, nHndl, nStat)
         ENDIF
     ELSE
         PRINT "Error: Data reading from remote GATT server failed (Code: ";nStat;")\n"
-        PRINT "(Please note that the BL652/BL654 alarm pin is not connected and so the alarm service has been removed)\n"
+        PRINT "(Please note that the BL652/BL653/BL654 alarm pin is not connected and so the alarm service has been removed)\n"
     ENDIF
 ENDFUNC 1
 

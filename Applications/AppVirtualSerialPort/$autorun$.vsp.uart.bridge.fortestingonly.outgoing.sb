@@ -1,4 +1,4 @@
-// Copyright (c) 2015, Laird
+// Copyright (c) 2021, Laird Connectivity
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -384,14 +384,14 @@ FUNCTION HndlrFindChar(cHndl,cProp,hVal,isUuid)
             UUID1$ = BASEUUID
             UUID2$ = RXUUID
             rc = BLEGATTCFINDCHAR(BleHandle, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0)
-            #cmpif 0x00000001 : AssertRC(rc, 325)
+            #cmpif 0x00000001 : AssertRC(rc, 387)
         ELSE
             MIHandle = hVal
             Mode = 2
             UUID1$ = BASEUUID
             UUID2$ = MOUUID
             rc = BLEGATTCFINDCHAR(BleHandle, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0)
-            #cmpif 0x00000001 : AssertRC(rc, 332)
+            #cmpif 0x00000001 : AssertRC(rc, 394)
         ENDIF
     ELSEIF (Mode == 2) THEN
         //Modem out
@@ -400,7 +400,7 @@ FUNCTION HndlrFindChar(cHndl,cProp,hVal,isUuid)
         UUID1$ = BASEUUID
         UUID2$ = RXUUID
         rc = BLEGATTCFINDCHAR(BleHandle, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0)
-        #cmpif 0x00000001 : AssertRC(rc, 341)
+        #cmpif 0x00000001 : AssertRC(rc, 403)
     ELSEIF (Mode == 3) THEN
         //RX
         IF (cProp == 0 && hVal == 0 && isUuid == 0) THEN
@@ -414,7 +414,7 @@ FUNCTION HndlrFindChar(cHndl,cProp,hVal,isUuid)
             UUID1$ = BASEUUID
             UUID2$ = TXUUID
             rc = BLEGATTCFINDCHAR(BleHandle, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0)
-            #cmpif 0x00000001 : AssertRC(rc, 355)
+            #cmpif 0x00000001 : AssertRC(rc, 417)
         ENDIF
     ELSEIF (Mode == 4) THEN
         //TX
@@ -429,7 +429,7 @@ FUNCTION HndlrFindChar(cHndl,cProp,hVal,isUuid)
             UUID1$ = BASEUUID
             UUID2$ = MOUUID
             rc = BLEGATTCFINDDESC(BleHandle, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0, 0xFE012902, 0)
-            #cmpif 0x00000001 : AssertRC(rc, 370)
+            #cmpif 0x00000001 : AssertRC(rc, 432)
         ENDIF
     ENDIF
 ENDFUNC 1
@@ -441,7 +441,7 @@ FUNCTION HndlrAttrWrite(cHndl,aHndl,nSts)
     if (nSts !=0) then
         #cmpif 0x80000000 : DbgMsg("## Pairing..")
         rc = BlePair(cHndl,1)
-        #cmpif 0x00000001 : AssertRC(rc, 381)
+        #cmpif 0x00000001 : AssertRC(rc, 444)
         exitfunc 1
     endif
 
@@ -450,7 +450,7 @@ FUNCTION HndlrAttrWrite(cHndl,aHndl,nSts)
         Mode = 8
         UUID1$ = "\01\00"
         rc = BLEGATTCWRITE(BleHandle, TXCCCDHandle, UUID1$)
-        #cmpif 0x00000001 : AssertRC(rc, 390)
+        #cmpif 0x00000001 : AssertRC(rc, 453)
     ELSEIF (Mode == 8) THEN
         //Write to Modem In
         IF (ModemInOutExists == 1) THEN
@@ -458,7 +458,7 @@ FUNCTION HndlrAttrWrite(cHndl,aHndl,nSts)
             UUID1$ = "\01"
             BufferFull = 0
             rc = BLEGATTCWRITE(BleHandle, MIHandle, UUID1$)
-            #cmpif 0x00000001 : AssertRC(rc, 398)
+            #cmpif 0x00000001 : AssertRC(rc, 461)
         ELSE
             BufferFull = 0
             BufferState = 0
@@ -566,13 +566,13 @@ FUNCTION HndlrFindDesc(nCtx, Hndl)
             //Enable modem out notifications
             UUID1$ = "\01\00"
             rc = BLEGATTCWRITE(BleHandle, MOCCCDHandle, UUID1$)
-            #cmpif 0x00000001 : AssertRC(rc, 506)
+            #cmpif 0x00000001 : AssertRC(rc, 569)
         ELSE
             //Modem in doesn't exist - enable TX notifications
             Mode = 8
             UUID1$ = "\01\00"
             rc = BLEGATTCWRITE(BleHandle, TXCCCDHandle, UUID1$)
-            #cmpif 0x00000001 : AssertRC(rc, 512)
+            #cmpif 0x00000001 : AssertRC(rc, 575)
         ENDIF
     ENDIF
 ENDFUNC 1
@@ -619,7 +619,7 @@ ENDFUNC 1
 #cmpif 0x80000000 : sub ShowConnParms(nCtx)
 #cmpif 0x80000000 :   dim intrvl,sprvto,slat
 #cmpif 0x80000000 :   rc = BleGetCurConnParms(nCtx,intrvl,sprvto,slat)
-#cmpif 0x80000001 :   AssertRC(rc, 8740)
+#cmpif 0x80000001 :   AssertRC(rc, 622)
 #cmpif 0x80000000 :   if rc==0 then
 #cmpif 0x80000000 :     print "\n## Conn :: Interval=";intrvl;",Supervision Tout=";sprvto;",Slave Latency=";slat
 #cmpif 0x80000000 :   endif
@@ -638,14 +638,14 @@ FUNCTION HndlrBleMsg(nMsgId, nCtx)
         #cmpif 0x80000000 : ShowConnParms(nCtx)
         //Opening the GATT client only when connected to save memory
         rc = BleGattcOpen(256, 0)
-        #cmpif 0x00000001 : AssertRC(rc, 565)
+        #cmpif 0x00000001 : AssertRC(rc, 641)
         BleHandle = nCtx
         Mode = 1
         dim UUID1$, UUID2$
         UUID1$ = BASEUUID
         UUID2$ = MIUUID
         rc = BLEGATTCFINDCHAR(nCtx, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0)
-        #cmpif 0x00000001 : AssertRC(rc, 572)
+        #cmpif 0x00000001 : AssertRC(rc, 648)
         PRINT "Connected!\n"
         InConnection = 1
 
@@ -683,11 +683,11 @@ FUNCTION HndlrBleMsg(nMsgId, nCtx)
       
     #cmpif 0x80000000 : case BLE_EVBLEMSGID_CONN_PARMS_UPDATE
     #cmpif 0x80000000 :     ShowConnParms(nCtx)
-        
+
     #cmpif 0x80000000 : case BLE_EVBLEMSGID_CONN_PARMS_UPDATE_FAIL
     #cmpif 0x80000000 :     DbgMsg("## Conn Parm Negotiation FAILED")
-    
-    case else        
+
+    case else
     endselect
 ENDFUNC 1
 
@@ -782,7 +782,7 @@ function _connect()
     //default min and max interval
     i[1] = 7500
     i[2] = 30000
-            
+
     rc = ExtractStrTokens(urtcmd$,1,1)
 
     //Use #defined/stored mac address if none given

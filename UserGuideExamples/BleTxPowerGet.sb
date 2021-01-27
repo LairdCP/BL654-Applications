@@ -74,7 +74,7 @@ if BleAdvertStart(0, addr$, 250, 60000, 0) == 0 then
     addr$ = sysinfo$(4)
     print "Adverts Started - connect to device named: ";BleGetDeviceName$();", address: ";strhexize$(addr$);"\n"
 else
-    AssertRC(rc, 76)
+    AssertRC(rc, 77)
     print "Adverts failed to start\n"
 endif
 

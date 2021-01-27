@@ -957,7 +957,7 @@ endsub
 sub ShowConnParms(nCtx as integer)
   dim intrvl,sprvto,slat
   rc= BleGetCurConnParms(nCtx,intrvl,sprvto,slat)
-  AssertRC(rc, 810)
+  AssertRC(rc, 960)
   if rc==0 then
     DbgMsgVal("Conn Interval",intrvl)
     DbgMsgVal("Conn Supervision Timeout",sprvto)
@@ -2683,7 +2683,7 @@ endfunc 1
 // function HandlerUartRxVsp() as integer
   //Just write to the VSP service
   // if vsplen==0 then
-    // vsplen  = UartReadN(vdta$, VSP_MAX_CHARDATA_LEN )
+    // vsplen  = UartReadN(vdta$, VSP_MAX_CHARDATA_LEN)
     // if vsplen > 0 then
       // can send to the VSP service in the peripheral
       // rc=BleGattcWriteCmd(hcVsp,vspRxH,vdta$)
@@ -2804,7 +2804,7 @@ endfunc 1
 // This handler is called when there is an advert timeout
 //==============================================================================
 function HandlerBlrAdvTimOut() as integer
-  DbgMsg( "\nAdverts timeout" )
+  DbgMsg("\nAdverts timeout")
 endfunc 1
 
 //==============================================================================
@@ -2825,7 +2825,7 @@ endfunc 1
 //==============================================================================
 function HandlerBlrConnTimOut() as integer
 
-  DbgMsg( "\nConnection attempt stopped via timeout" )
+  DbgMsg("\nConnection attempt stopped via timeout")
 
 endfunc 1
 
@@ -2834,7 +2834,7 @@ endfunc 1
 //==============================================================================
 function HandlerBlrScanTimOut() as integer
 
-  DbgMsg( "\nScanning stopped via timeout" )
+  DbgMsg("\nScanning stopped via timeout")
 
 endfunc 1
 
@@ -2845,7 +2845,7 @@ function HandlerFastPaged() as integer
   dim ad$,rsi
   rc = BleScanGetPagerAddr(ad$,rsi)
   if rc != 0 then
-    DbgMsg( "\nBleScanGetPagerAddr() failed " )
+    DbgMsg("\nBleScanGetPagerAddr() failed ")
   endif
   print "\nFast Paged by : "; strhexize$(ad$); " rssi = ";rsi
 
@@ -3272,10 +3272,10 @@ endsub
     //Ensure we can detect changes in nAutorun (SIO28)
     // if StrCmp(devNme$, "Laird BT900") then
         // rc=GpioBindEvent(0,4,2)         //DTR -> SIO 4 on BT900
-        // AssertRC(rc, 2574)
+        // AssertRC(rc, 3275)
     // elseif StrCmp(devNme$, "Laird BL600") || StrCmp(devNme$, "Laird BL620") then
         // rc=GpioBindEvent(0,28,2)        //DTR -> SIO 28 on BL6XX
-        // AssertRC(rc, 2577)
+        // AssertRC(rc, 3278)
     // endif
 // endsub
 

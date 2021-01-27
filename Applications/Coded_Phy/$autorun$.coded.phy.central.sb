@@ -64,7 +64,7 @@ dim u$ : u$ = ""                    //UART read buffer
 dim RecBuf$ : RecBuf$ = ""          //VSP read buffer
 dim nBleMaxPacketLength             //Default maximum packet length on BL654
 dim nAttributeMTU                   //Default Maximum Transmission Unit on BL654
-dim nAttributeLength                //Default Attribute Data Length on BL654s
+dim nAttributeLength                //Default Attribute Data Length on BL654
 
 //******************************************************************************
 // Initialise Global Variable

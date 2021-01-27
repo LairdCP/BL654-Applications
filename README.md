@@ -5,7 +5,7 @@ A repository for smartBASIC applications that run on the Laird Connectivity BL65
 
 BL654 Overview
 ------------
-Laird Connectivity’s BL654 contains the latest generation silicon with Bluetooth Low Energy v5 capabilities and groundbreaking ultra-low power performance. Building on the expertise of the BL600 and BL652 Series, the BL654’s class-leading Nordic nRF52840 silicon, optimized low power schemes and smartBASIC programming language provide a secure, stable, hostless Bluetooth environment. The BL654 introduces Bluetooth v5, bringing long range connectivity, industrial security and feature expansion to Laird Connectivity’s proven Bluetooth Low Energy modules. Let Laird Connectivty’s innovative BL654 series and decades of expertise in Bluetooth module design speed your product to market.
+Laird Connectivity’s BL654 contains the latest generation silicon with Bluetooth Low Energy v5 capabilities and groundbreaking ultra-low power performance. Building on the expertise of the BL600 and BL652 Series, the BL654’s class-leading Nordic nRF52840 silicon, optimized low power schemes and smartBASIC programming language provide a secure, stable, hostless Bluetooth environment. The BL654 introduces Bluetooth v5, bringing long range connectivity, industrial security and feature expansion to Laird Connectivity’s proven Bluetooth Low Energy modules. Let Laird Connectivity’s innovative BL654 series and decades of expertise in Bluetooth module design speed your product to market.
 
 UwTerminalX
 -----------

@@ -39,7 +39,7 @@ function HandlerBleAuthkey(BYVAL Conn, BYVAL Type, BYVAL Flags)
     print "\nAuth Key Request, Handle: ";integer.h'Conn;", Type: ";Type
     print "\nPair request: Accepting"
     rc=BleAcceptPairing(Conn,1)
-    AssertRC(rc,41)
+    AssertRC(rc, 42)
     print "\nPairing in progress"
 endfunc 1
 
@@ -52,7 +52,7 @@ function HandlerBleAuthInfo(BYVAL Conn, BYVAL Code, BYVAL Source, BYVAL AuthInfo
         //Success
         print "\nAuthorisation was successful, Handle = ";integer.h'Conn;", AuthInfo flags = ";integer.h'AuthInfoFlags;", KeyExchange = ";integer.h'KeyExchange;", SecurityModeLevels = ";integer.h'SecurityModeLevels
         rc=BleGetCurConnSecInfo(Conn, flags, securityMode, securityLevel)
-        AssertRC(rc,54)
+        AssertRC(rc, 55)
         print "\nConSecInfo: Handle = ";integer.h'Conn;", SecInfo flags = ";integer.h'flags;", security mode = ";securityMode;", security level = ";securityLevel
     else
         //Failure
@@ -67,11 +67,11 @@ function HndlrBleMsg(byval nMsgId as integer, byval nCtx as integer)
     select nMsgId
         case BLE_EVBLEMSGID_CONNECT
             rc=BleGetCurConnSecInfo(nCtx, flags, securityMode, securityLevel)
-            AssertRC(rc,65)
+            AssertRC(rc, 70)
             print "\nPre-bond: Handle = ";integer.h'nCtx;", SecInfo flags = ";integer.h'flags;", security mode = ";securityMode;", security level = ";securityLevel
             //bond with the peer
             rc=BlePair(nCtx, 1)
-            AssertRC(rc,73)
+            AssertRC(rc, 74)
             print " Bonding..."
         case BLE_EVBLEMSGID_DISCONNECT
             print "\nDisconnected"
@@ -93,7 +93,7 @@ rc=BleSecMngrIoCap(0)           //set io capability to just works
 pr$ = GATT_SERVER_ADDRESS
 pr$ = StrDehexize$(pr$)
 rc=BleConnect(pr$, 10000, 25, 100, 30000000)
-AssertRC(rc,95)
+AssertRC(rc, 96)
 print "\nConnecting to ";GATT_SERVER_ADDRESS
 
 //------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2016, Laird
+// Copyright (c) 2015-2021, Laird Connectivity
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -23,7 +23,8 @@
 //
 // BL654 custom VSP service: This application will host a VSP service and allow
 //                           connections and communication similar to how VSP
-//                           bridge mode on the BL600/BL652/BL654/BT900 works.
+//                           bridge mode on the BL600/BL652/BL653/BL654/BT900 
+//                           works.
 //
 //******************************************************************************
 
@@ -72,46 +73,46 @@ FUNCTION CreateVSPService()
     //Create the VSP service
     UUIDStr$ = BASEUUID
     rc = BleServiceNew(1, BleHandleUuid128(UUIDStr$), svcID)
-    AssertRC(rc, 75)
+    AssertRC(rc, 76)
 
     //Create the ModemIn characteristic
     mdVal = BleAttrMetadata(0,1,2,0,rc)
     UUIDStr$ = MIUUID
     rc = BleCharNew(8, BleHandleUuid128(UUIDStr$), mdVal, 0, 0)
-    AssertRC(rc, 81)
+    AssertRC(rc, 82)
     s$ = "\01" //Enabled by default
     rc = BleCharCommit(svcID, s$, MIchar)
-    AssertRC(rc, 84)
+    AssertRC(rc, 85)
 
     //Create the ModemOut characteristic
     mdVal = BleAttrMetadata(0,0,2,0,rc)
     mdCccd = BleAttrMetadata(1,1,2,0,rc) //Metadata for CCCD attribute of Characteristic
     UUIDStr$ = MOUUID
     rc = BleCharNew(16, BleHandleUuid128(UUIDStr$), mdVal, mdCccd, 0)
-    AssertRC(rc, 91)
+    AssertRC(rc, 92)
     rc = BleCharCommit(svcID, s$, MOchar)
-    AssertRC(rc, 93)
+    AssertRC(rc, 94)
 
     //Create the RX characteristic
     mdVal = BleAttrMetadata(0,1,20,1,rc)
     UUIDStr$ = RXUUID
     rc = BleCharNew(8, BleHandleUuid128(UUIDStr$), mdVal, 0, 0)
-    AssertRC(rc, 99)
+    AssertRC(rc, 100)
     rc = BleCharCommit(svcID, s$, RXchar)
-    AssertRC(rc, 101)
+    AssertRC(rc, 102)
 
     //Create the TX characteristic
     mdVal = BleAttrMetadata(0,0,20,1,rc)
     mdCccd = BleAttrMetadata(1,1,2,0,rc) //Metadata for CCCD attribute of Characteristic
     UUIDStr$ = TXUUID
     rc = BleCharNew(16, BleHandleUuid128(UUIDStr$), mdVal, mdCccd, 0)
-    AssertRC(rc, 108)
+    AssertRC(rc, 109)
     rc = BleCharCommit(svcID, s$, TXchar)
-    AssertRC(rc, 110)
+    AssertRC(rc, 111)
 
     //Commit the service
     rc = BleServiceCommit(svcID)
-    AssertRC(rc, 114)
+    AssertRC(rc, 115)
 ENDFUNC 1
 
 //==============================================================================
@@ -122,22 +123,22 @@ FUNCTION StartVSPAdvert()
     //Start sending adverts containing the VSP service
     scRpt$ = ""
     rc = BleScanRptInit(scRpt$)
-    AssertRC(rc, 125)
+    AssertRC(rc, 126)
 
     //Advertise the 128 bit uuid in a scan report
     UUIDStr$ = BASEUUID
     rc = BleAdvRptAddUuid128(scRpt$, BleHandleUuid128(UUIDStr$))
-    AssertRC(rc, 130)
+    AssertRC(rc, 131)
     adRpt$ = ""
 
     //Commit the advert report
     rc = BleAdvRptsCommit(adRpt$,scRpt$)
-    AssertRC(rc, 135)
+    AssertRC(rc, 136)
 
     //Start advertising
     addr$ = ""  //because we are not doing a DIRECT advert
     rc = BleAdvertStart(0,addr$,100,0,0)
-    AssertRC(rc, 140)
+    AssertRC(rc, 141)
 ENDFUNC 1
 
 //==============================================================================
@@ -150,7 +151,7 @@ FUNCTION HndlrUartRx()
     IF UARTBlocked == 0 && DataQueued == 1 THEN
         //UART is not blocked
         rc = BleCharValueRead(MIchar, Rd$)
-        AssertRC(rc, 153)
+        AssertRC(rc, 154)
         IF strcmp(Rd$, "\01") == 0 THEN
             //Other device is able to accept
             RdLen = UARTREADN(SendData$, 20)
@@ -179,7 +180,7 @@ FUNCTION HndlrCharVal(charHandle, offset, len)
     //Characteristic written
     dim Rd$, arc, SLen, SWritten
     arc = BleCharValueRead(charHandle, Rd$)
-    AssertRC(arc, 182)
+    AssertRC(arc, 183)
 
         IF charHandle == RXchar THEN
             //RX
@@ -208,7 +209,7 @@ FUNCTION HndlrCharVal(charHandle, offset, len)
             ENDIF
         ELSEIF charHandle == MIchar THEN
             rc = BleCharValueRead(MIchar, Rd$)
-            AssertRC(rc, 202)
+            AssertRC(rc, 212)
             IF strcmp(Rd$, "\01") == 0 THEN
                 rc = HndlrUartRx()
             ENDIF

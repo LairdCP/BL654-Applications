@@ -15,8 +15,8 @@ if there was a wired uart connection.
      The minimum firmware version that you will need is as follows:
      
                              BL652 : N/A (next release)
-                             BL653 : N/A (next release)
-                             BL654 : v29.4.7.2
+                             BL653 : v30.2.3.0
+                             BL654 : v29.5.7.2
           
       The command 'AT I 3<cr>' will return the version number from
       the module

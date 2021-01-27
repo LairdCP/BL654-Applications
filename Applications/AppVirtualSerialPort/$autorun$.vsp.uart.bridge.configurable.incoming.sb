@@ -1,5 +1,5 @@
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Copyright (c) 2016, Laird                                                  ++
+// Copyright (c) 2021, Laird Connectivity                                     ++
 //                                                                            ++
 // Permission to use, copy, modify, and/or distribute this software for any   ++
 // purpose with or without fee is hereby granted, provided that the above     ++
@@ -682,13 +682,13 @@ endif
 //------------------------------------------------------------------------------
 sub NvFailure()
     //Non-volatile storage failure and application set to not continue when this is detected
-    #cmpif 0x00010000 : AssertRC(rc, 3550)
+    #cmpif 0x00010000 : AssertRC(rc, 685)
 
     //Enable LED2 flashing if set to do so
     rc = 0
     #cmpif 0x00000008 : rc = GPIOSetFunc(GPIOLED2Pin, 2, 3) //Set as frequency output
     #cmpif 0x00000008 : GPIOWrite(GPIOLED2Pin, 2)
-    #cmpif 0x00010000 : AssertRC(rc, 3610)
+    #cmpif 0x00010000 : AssertRC(rc, 691)
 endsub
 
 //------------------------------------------------------------------------------
@@ -697,11 +697,11 @@ endsub
 // This function gets the default for the key of INTEGER type
 // Valid keyID values are 0 to (CONFIG_KEY_ID_MAX_NUM-1)
 //------------------------------------------------------------------------------
-function ConfigKeyGetDef( keyID as integer) as integer
+function ConfigKeyGetDef(keyID as integer) as integer
 
     dim defVal
 
-    #cmpif 0x00010000 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_NUM-1), 3730 )
+    #cmpif 0x00010000 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_NUM-1), 704)
 
     select keyID
     case VspTxBufConfigID
@@ -762,7 +762,7 @@ endfunc defVal
 // Valid keyID values are 0 to (CONFIG_KEY_ID_MAX_NUM-1)
 // Integer config keys are stored beginning at ID = CONFIG_KEY_ID_START_NUM
 //------------------------------------------------------------------------------
-function ConfigKeyGet( keyID as integer) as integer
+function ConfigKeyGet(keyID as integer) as integer
 
     dim keyVal,tmpStr$
 
@@ -770,7 +770,7 @@ function ConfigKeyGet( keyID as integer) as integer
         exitfunc ConfigKeyGetDef(keyID)
     endif
 
-    if (NvRecordGet((keyID + CONFIG_KEY_ID_START_NUM), tmpStr$) <= 0 ) then
+    if (NvRecordGet((keyID + CONFIG_KEY_ID_START_NUM), tmpStr$) <= 0) then
         //The key is empty or does not exist yet
         exitfunc ConfigKeyGetDef(keyID)
     else
@@ -796,11 +796,11 @@ endfunc 1
 // This function checks if the integer type key value is valid
 // Return 0 if not valid !0 if valid
 //------------------------------------------------------------------------------
-function ConfigKeyIsValid( keyID as integer, byref newVal as integer) as integer
+function ConfigKeyIsValid(keyID as integer, byref newVal as integer) as integer
 
     dim isValid
 
-    #cmpif 0x00010000 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_NUM-1), 4480 )
+    #cmpif 0x00010000 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_NUM-1), 803)
 
     select keyID
     case VspTxBufConfigID
@@ -903,9 +903,9 @@ endfunc 0
 // This function gets the default for the key of STRING type
 // Valid keyID values are 0 to (CONFIG_KEY_ID_MAX_STR-1)
 //------------------------------------------------------------------------------
-sub ConfigKeyGetDef$( keyID as integer, byref defVal$ as string)
+sub ConfigKeyGetDef$(keyID as integer, byref defVal$ as string)
 
-    #cmpif 0x00010000 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_STR-1), 5550 )
+    #cmpif 0x00010000 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_STR-1), 908)
 
     select keyID
     case VspServiceUUIDConfigID
@@ -943,7 +943,7 @@ function ConfigKeyGet$(keyID as integer) as string
         //invalid key id
         ConfigKeyGetDef$(keyID,keyVal$)
 
-    elseif (NvRecordGet((keyID+CONFIG_KEY_ID_START_STR), keyVal$) <= 0 ) then
+    elseif (NvRecordGet((keyID+CONFIG_KEY_ID_START_STR), keyVal$) <= 0) then
         //the key does not exist yet
         ConfigKeyGetDef$(keyID,keyVal$)
 
@@ -956,11 +956,11 @@ endfunc keyVal$
 // This function checks if the string type key value is valid
 // Return 0 if not valid !0 if valid
 //------------------------------------------------------------------------------
-function ConfigKey$IsValid( keyID as integer, newVal$ as string) as integer
+function ConfigKey$IsValid(keyID as integer, newVal$ as string) as integer
 
     dim isValid, tmpStr1$, nlen
 
-    #cmpif 0x00010000 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_STR-1), 6000 )
+    #cmpif 0x00010000 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_STR-1), 963)
 
     isValid = 0 // assume invalid
     nlen = strlen(newVal$) //get length of new value
@@ -968,18 +968,18 @@ function ConfigKey$IsValid( keyID as integer, newVal$ as string) as integer
     select keyID
     case VspServiceUUIDConfigID
         tmpStr1$=StrDehexize$(newVal$)
-        if( strlen(tmpStr1$) == 16 ) then
+        if(strlen(tmpStr1$) == 16) then
             isValid=1
         endif
 
     case DeviceNameConfigID
-        if( (nlen>=DeviceNameConfigMinLen) && (nlen<=DeviceNameConfigMaxLen) ) then
+        if((nlen>=DeviceNameConfigMinLen) && (nlen<=DeviceNameConfigMaxLen)) then
             //valid length
             isValid=1
         endif
 
     case LoginPswrdConfigID
-        if( (nlen>=LoginPswrdConfigMinLen) && (nlen<=LoginPswrdConfigMaxLen) ) then
+        if((nlen>=LoginPswrdConfigMinLen) && (nlen<=LoginPswrdConfigMaxLen)) then
             //valid length
             isValid=1
         endif
@@ -1082,25 +1082,25 @@ function OpenVSPService()
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //Tx buffer size
-    vspTxBufLen = ConfigKeyGet( VspTxBufConfigID )
+    vspTxBufLen = ConfigKeyGet(VspTxBufConfigID)
     //Rx buffer size
-    vspRxBufLen = ConfigKeyGet( VspRxBufConfigID)
+    vspRxBufLen = ConfigKeyGet(VspRxBufConfigID)
 
     //Base UUID
-    TmpStr$ = ConfigKeyGet$( VspServiceUUIDConfigID )
+    TmpStr$ = ConfigKeyGet$(VspServiceUUIDConfigID)
     TmpStr$ = StrDehexize$(TmpStr$)
     BaseUUID = BleHandleUuid128(TmpStr$)
     //Tx UUID handles
-    TxUUID = ConfigKeyGet( VspTxUUIDConfigID)
+    TxUUID = ConfigKeyGet(VspTxUUIDConfigID)
     TxUUID = BleHandleUuidSibling(BaseUUID, TxUUID)
     //Rx UUID handles
-    RxUUID = ConfigKeyGet( VspRxUUIDConfigID)
+    RxUUID = ConfigKeyGet(VspRxUUIDConfigID)
     RxUUID = BleHandleUuidSibling(BaseUUID, RxUUID)
 
     //Modem characteristics enabled/disabled
-    ModemInUUID  = ConfigKeyGet( VspMdmInUUIDConfigID)
-    ModemOutUUID = ConfigKeyGet( VspMdmOutUUIDConfigID)
-    if( (ModemInUUID==0) || (ModemOutUUID==0) ) then
+    ModemInUUID  = ConfigKeyGet(VspMdmInUUIDConfigID)
+    ModemOutUUID = ConfigKeyGet(VspMdmOutUUIDConfigID)
+    if((ModemInUUID==0) || (ModemOutUUID==0)) then
         //do not register the modem chars
         ModemInUUID=0
         ModemOutUUID=0
@@ -1110,12 +1110,12 @@ function OpenVSPService()
     endif
 
     //VspFlags
-    VspFlags = ConfigKeyGet( VspEncryptConfigID)
+    VspFlags = ConfigKeyGet(VspEncryptConfigID)
     //Read the disconnection timeout value (if the encryption flag is set)
-    if ((VspFlags & 0x1) == 0x1 ) then
+    if ((VspFlags & 0x1) == 0x1) then
         //VSP encryption is enabled, get timer value
-        DisconnectTime = ConfigKeyGet( EncrDisconToutConfigID)
-        if ((VspFlags & 0x2) == 0x2 ) then
+        DisconnectTime = ConfigKeyGet(EncrDisconToutConfigID)
+        if ((VspFlags & 0x2) == 0x2) then
             VspFlags = 0x0C
         else
             VspFlags = 0x08
@@ -1128,7 +1128,7 @@ function OpenVSPService()
 
     //Open the VSP service with the provided configuration
     rc = BleVSPOpenEx(vspTxBufLen, vspRxBufLen, VspFlags, BaseUUID, RxUUID, TxUUID, ModemInUUID, ModemOutUUID)
-    #cmpif 0x00010000 : AssertRC(rc, 7680)
+    #cmpif 0x00010000 : AssertRC(rc, 1131)
 endfunc 1
 
 //------------------------------------------------------------------------------
@@ -1138,19 +1138,19 @@ function SetupGAPService()
     dim TmpStr$, TmpVal, MinCntInt, MaxCntInt, DevName$
 
     //Set the tx power level
-    TmpVal = ConfigKeyGet( TxPowerConfigID)
+    TmpVal = ConfigKeyGet(TxPowerConfigID)
     rc=BleTxPowerSet(TmpVal)
 
     //Read the minimum connection interval and check sensible value
-    MinCntInt = ConfigKeyGet( MinConnIntConfigID)
+    MinCntInt = ConfigKeyGet(MinConnIntConfigID)
 
     //Read the maximum connection interval and check sensible value
-    MaxCntInt = ConfigKeyGet( MaxConnIntConfigID)
+    MaxCntInt = ConfigKeyGet(MaxConnIntConfigID)
 
     //Get device name
-    DevName$ = ConfigKeyGet$( DeviceNameConfigID)
+    DevName$ = ConfigKeyGet$(DeviceNameConfigID)
     //Append part of module BT address if required
-    TmpVal = ConfigKeyGet( DevNameFormatConfigID)
+    TmpVal = ConfigKeyGet(DevNameFormatConfigID)
     #cmpif 0x80000000 : DbgMsgVal("DevNameFormat =",TmpVal)
     //Default selection if the BT address is appended to the advertised device name
     if ((TmpVal >= 1) && (TmpVal <= 7)) then
@@ -1169,10 +1169,10 @@ function SetupGAPService()
 
     //Initialise the GAP service with the connection interval data and device name
     rc = BleGapSvcInit(DevName$, 0, 0, MinCntInt, MaxCntInt, 4000000,  0)
-    #cmpif 0x00010000 : AssertRC(rc, 8220)
+    #cmpif 0x00010000 : AssertRC(rc, 1172)
 
     //Read the advertising interval and check that the value is sane
-    AdvInt = ConfigKeyGet( AdvertIntvlConfigID)
+    AdvInt = ConfigKeyGet(AdvertIntvlConfigID)
 
 endfunc 1
 
@@ -1183,13 +1183,13 @@ sub CreateAdverts()
     //Add device name to advert report and service UUID to scan report
     dim advRpt$, scRpt$
     rc = BleAdvRptInit(advRpt$, 2, 0, MaxDevNameSize)
-    #cmpif 0x00010000 : AssertRC(rc, 8440)
+    #cmpif 0x00010000 : AssertRC(rc, 1186)
     rc = BleScanRptInit(scRpt$)
-    #cmpif 0x00010000 : AssertRC(rc, 8460)
+    #cmpif 0x00010000 : AssertRC(rc, 1188)
     rc = BleAdvRptAddUuid128(scRpt$, BaseUUID)
-    #cmpif 0x00010000 : AssertRC(rc, 8480)
+    #cmpif 0x00010000 : AssertRC(rc, 1190)
     rc = BleAdvRptsCommit(advRpt$, scRpt$)
-    #cmpif 0x00010000 : AssertRC(rc, 8500)
+    #cmpif 0x00010000 : AssertRC(rc, 1192)
 endsub
 
 //------------------------------------------------------------------------------
@@ -1203,7 +1203,7 @@ sub StartAdvertising()
 
         //Start advertising over BLE
         rc = BleAdvertStart(0, Addr$, AdvInt, 0, 0)
-        #cmpif 0x00010000 : AssertRC(rc, 8640)
+        #cmpif 0x00010000 : AssertRC(rc, 1206)
     endif
 endsub
 
@@ -1394,7 +1394,7 @@ endfunc 1
 //------------------------------------------------------------------------------
 // returns an integer with number of bits set to 1 from right
 //------------------------------------------------------------------------------
-function GetBitMask( bits as integer) as integer
+function GetBitMask(bits as integer) as integer
     dim i,j,bm
     bm=0
     i=1
@@ -1406,7 +1406,7 @@ endfunc bm
 //------------------------------------------------------------------------------
 // returns the a version string by splitting the bits as specified
 //------------------------------------------------------------------------------
-function GetVersion$( plat as integer, major as integer, minor as integer, engb as integer) as string
+function GetVersion$(plat as integer, major as integer, minor as integer, engb as integer) as string
     dim v$, cv[4], compId
 
     compId = SysInfo(3)
@@ -1442,16 +1442,16 @@ function _ver(byref bufferStr$, ful)  //ful!=0 for the full
       bufferStr$ = bufferStr$ + "\nUpdated " + AppUpdated + " on "
       if (DevID == BL600_DEV_ID) then
           //Running on BL600
-          bufferStr$ = bufferStr$ + "BL600 " + GetVersion$( 6,6,14,6)
+          bufferStr$ = bufferStr$ + "BL600 " + GetVersion$(6,6,14,6)
       elseif (DevID == BL652_DEV_ID) then
           //Running on BL652
-          bufferStr$ = bufferStr$ + "BL652 " + GetVersion$( 8,6,12,6)
+          bufferStr$ = bufferStr$ + "BL652 " + GetVersion$(8,6,12,6)
       elseif (DevID == BL654_DEV_ID) then
           //Running on BL654
-          bufferStr$ = bufferStr$ + "BL654 " + GetVersion$( 8,6,12,6)
+          bufferStr$ = bufferStr$ + "BL654 " + GetVersion$(8,6,12,6)
       elseif (DevID == BT900_DEV_ID) then
           //Running on BT900
-          bufferStr$ = bufferStr$ + "BT900 " + GetVersion$( 6,6,14,6)
+          bufferStr$ = bufferStr$ + "BT900 " + GetVersion$(6,6,14,6)
       else
           //Unknown module
           bufferStr$ = bufferStr$ + "Unknown"
@@ -1614,7 +1614,7 @@ function _client(byref bufferStr$)
     if (ConnectionID != 0) then
         //Connection: output address
         rc = BleGetAddrFromConnHandle(ConnectionID, tmpStr$)
-        #cmpif 0x00010000 : AssertRC(rc, 11420)
+        #cmpif 0x00010000 : AssertRC(rc, 1617)
         BufferStr$ = BufferStr$ + strhexize$(tmpStr$)
     else
         //No connection
@@ -1655,7 +1655,7 @@ endfunc 0
 
 //==============================================================================
 //==============================================================================
-sub AppendRspEnd(rsp as integer, byref bufferStr$ )
+sub AppendRspEnd(rsp as integer, byref bufferStr$)
     if strlen(bufferStr$) > 1 then
         bufferStr$ = bufferStr$ + "\r\n"
     endif
@@ -1774,7 +1774,7 @@ function CheckForLoginCommand(byref newData$, byref ORIGRecBuf$, byref FWDSndBuf
 
     //now only scan for login command if password len is >= than min
     GoForBridge=0
-    if ( LoginPasswordLen >= LoginPswrdConfigMinLen ) then
+    if (LoginPasswordLen >= LoginPswrdConfigMinLen) then
         //if the buffer is longer than the length of the command string then we
         //are no longer going to get the magic login command so just enter bridge mode
         if strlen(ORIGRecBuf$) >= LoginPasswordLen then
@@ -1925,7 +1925,7 @@ sub SetupGPIOs()
     //Setup LED1 as output if configured to be used as connection indicator
     rc = 0
     #cmpif 0x00000002 : rc = GPIOSetFunc(GPIOLED1Pin, 2, 0)
-    #cmpif 0x00010000 : AssertRC(rc, 13580)
+    #cmpif 0x00010000 : AssertRC(rc, 1928)
 
     //Set LED state if LED2 status is enabled
     rc = 0
@@ -1935,21 +1935,21 @@ sub SetupGPIOs()
     #cmpif 0x00000004 : else
     #cmpif 0x00000004 :     GPIOWrite(GPIOLED2Pin, 0)
     #cmpif 0x00000004 : endif
-    #cmpif 0x00010000 : AssertRC(rc, 13680)
+    #cmpif 0x00010000 : AssertRC(rc, 1938)
 
     //Determine which pins are to be used
-    CONNPin = ConfigKeyGet( CONNPinConfigID)
-    ENCRPin = ConfigKeyGet( ENCRPinConfigID)
+    CONNPin = ConfigKeyGet(CONNPinConfigID)
+    ENCRPin = ConfigKeyGet(ENCRPinConfigID)
 
     //Setup CONN as output GPIO for connection status
     if CONNPin>= 0 then
         rc = GPIOSetFunc(CONNPin, 2, 0) //0 = initial is low, 1 = initial is high
-        #cmpif 0x00010000 : AssertRC(rc, 13720)
+        #cmpif 0x00010000 : AssertRC(rc, 1947)
     endif
     //Setup ENCR as output GPIO for connection encryption status
     if ENCRPin>= 0 then
         rc = GPIOSetFunc(ENCRPin, 2, 0) //0 = initial is low, 1 = initial is high
-        #cmpif 0x00010000 : AssertRC(rc, 13720)
+        #cmpif 0x00010000 : AssertRC(rc, 1952)
     endif
 endsub
 
@@ -1958,7 +1958,7 @@ endsub
 //------------------------------------------------------------------------------
 sub Initialise()
     //cache the login password
-    LoginPassword$   = ConfigKeyGet$( LoginPswrdConfigID ) + "\r"
+    LoginPassword$   = ConfigKeyGet$(LoginPswrdConfigID) + "\r"
     LoginPasswordLen = strlen(LoginPassword$)
 
 
@@ -1979,17 +1979,17 @@ function SetupUART()
     endif
 
     //Read UART Baud rate and check it is sane
-    UARTSpeed = ConfigKeyGet( UARTSpeedConfigID)
+    UARTSpeed = ConfigKeyGet(UARTSpeedConfigID)
     //Read UART Tx buffer size and check it is sane
-    UARTTxBuf = ConfigKeyGet( UARTTxBufConfigID)
+    UARTTxBuf = ConfigKeyGet(UARTTxBufConfigID)
     //Read UART Rx buffer size and check it is sane
-    UARTRxBuf = ConfigKeyGet( UARTRxBufConfigID)
+    UARTRxBuf = ConfigKeyGet(UARTRxBufConfigID)
     //Read UART flags and check it is sane
     UARTFlags$ = UartConfigParameters
 
     //Reopen the UART
     rc = UartOpen(UARTSpeed, UARTTxBuf, UARTRxBuf, UARTFlags$)
-    #cmpif 0x00010000 : AssertRC(rc, 14020)
+    #cmpif 0x00010000 : AssertRC(rc, 1992)
 endfunc 1
 
 //------------------------------------------------------------------------------

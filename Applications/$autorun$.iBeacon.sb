@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Laird
+// Copyright (c) 2021, Laird Connectivity
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -146,7 +146,7 @@
 //   #  [Calibrated RSSI Value]:                      569a2017-b87f-490c-92cb-11ba5ea5167c #
 //   #     - RSSI measured 1m from BL654 when Tx Power = 4 dBm                             #
 //   #     - Length: 1 byte (signed 8 bit)                                                 #
-//   #     - Unit:  dBm   (eg -128 = 0x80 -60==0xC4 -1==0xFF )                             #
+//   #     - Unit:  dBm   (eg -128 = 0x80 -60==0xC4 -1==0xFF)                              #
 //   #                                                                                     #
 //   #  [Remain Connectible Time]:                    569a2018-b87f-490c-92cb-11ba5ea5167c #
 //   #     - Time to advertise with type 0 (connectible)                                   #

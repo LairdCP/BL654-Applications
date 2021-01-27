@@ -1,4 +1,4 @@
-// Copyright (c) 2015, Laird
+// Copyright (c) 2021, Laird Connectivity
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -123,8 +123,8 @@
 // *Instructions*
 //      1. Set BTAddr to the BT Address of the peer device you want to connect to by default
 //      2. Set CONNECT_ON_STARTUP to 1 to automatically connect
-//      3. Start a VSP server on a BT900/BL600/BL652/BL654 with the other VSP application (on github) or by bridging SIO_19 to GND to enable command VSP mode (bridge SIO_7 to VCC on a BL600 development kit)
-//      4. Download and run this application to a BT900/BL652/BL654 and it will automatically connect to the VSP server
+//      3. Start a VSP server on a BT900/BL600/BL652/BL653/BL654 with the other VSP application (on github) or by bridging SIO_19 to GND to enable command VSP mode (bridge SIO_7 to VCC on a BL600 development kit)
+//      4. Download and run this application to a BT900/BL652/BL653/BL654 and it will automatically connect to the VSP server
 //
 //
 // ::Note::
@@ -339,14 +339,14 @@ FUNCTION HndlrFindChar(cHndl,cProp,hVal,isUuid)
             UUID1$ = BASEUUID
             UUID2$ = RXUUID
             rc = BLEGATTCFINDCHAR(BleHandle, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0)
-            AssertRC(rc, 325)
+            AssertRC(rc, 342)
         ELSE
             MIHandle = hVal
             Mode = 2
             UUID1$ = BASEUUID
             UUID2$ = MOUUID
             rc = BLEGATTCFINDCHAR(BleHandle, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0)
-            AssertRC(rc, 332)
+            AssertRC(rc, 349)
         ENDIF
     ELSEIF (Mode == 2) THEN
         //Modem out
@@ -355,7 +355,7 @@ FUNCTION HndlrFindChar(cHndl,cProp,hVal,isUuid)
         UUID1$ = BASEUUID
         UUID2$ = RXUUID
         rc = BLEGATTCFINDCHAR(BleHandle, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0)
-        AssertRC(rc, 341)
+        AssertRC(rc, 358)
     ELSEIF (Mode == 3) THEN
         //RX
         IF (cProp == 0 && hVal == 0 && isUuid == 0) THEN
@@ -369,7 +369,7 @@ FUNCTION HndlrFindChar(cHndl,cProp,hVal,isUuid)
             UUID1$ = BASEUUID
             UUID2$ = TXUUID
             rc = BLEGATTCFINDCHAR(BleHandle, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0)
-            AssertRC(rc, 355)
+            AssertRC(rc, 372)
         ENDIF
     ELSEIF (Mode == 4) THEN
         //TX
@@ -384,7 +384,7 @@ FUNCTION HndlrFindChar(cHndl,cProp,hVal,isUuid)
             UUID1$ = BASEUUID
             UUID2$ = MOUUID
             rc = BLEGATTCFINDDESC(BleHandle, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0, 0xFE012902, 0)
-            AssertRC(rc, 370)
+            AssertRC(rc, 387)
         ENDIF
     ENDIF
 ENDFUNC 1
@@ -395,7 +395,7 @@ ENDFUNC 1
 FUNCTION HndlrAttrWrite(cHndl,aHndl,nSts)
     if (nSts !=0) then
         rc = BlePair(cHndl,1)
-        AssertRC(rc, 381)
+        AssertRC(rc, 398)
         exitfunc 1
     endif
 
@@ -404,7 +404,7 @@ FUNCTION HndlrAttrWrite(cHndl,aHndl,nSts)
         Mode = 8
         UUID1$ = "\01\00"
         rc = BLEGATTCWRITE(BleHandle, TXCCCDHandle, UUID1$)
-        AssertRC(rc, 390)
+        AssertRC(rc, 407)
     ELSEIF (Mode == 8) THEN
         //Write to Modem In
         IF (ModemInOutExists == 1) THEN
@@ -412,7 +412,7 @@ FUNCTION HndlrAttrWrite(cHndl,aHndl,nSts)
             UUID1$ = "\01"
             BufferFull = 0
             rc = BLEGATTCWRITE(BleHandle, MIHandle, UUID1$)
-            AssertRC(rc, 398)
+            AssertRC(rc, 415)
         ELSE
             BufferFull = 0
             BufferState = 0
@@ -520,13 +520,13 @@ FUNCTION HndlrFindDesc(nCtx, Hndl)
             //Enable modem out notifications
             UUID1$ = "\01\00"
             rc = BLEGATTCWRITE(BleHandle, MOCCCDHandle, UUID1$)
-            AssertRC(rc, 506)
+            AssertRC(rc, 523)
         ELSE
             //Modem in doesn't exist - enable TX notifications
             Mode = 8
             UUID1$ = "\01\00"
             rc = BLEGATTCWRITE(BleHandle, TXCCCDHandle, UUID1$)
-            AssertRC(rc, 512)
+            AssertRC(rc, 529)
         ENDIF
     ENDIF
 ENDFUNC 1
@@ -579,14 +579,14 @@ FUNCTION HndlrBleMsg(nMsgId, nCtx)
 
         //Opening the GATT client only when connected to save memory
         rc = BleGattcOpen(256, 0)
-        AssertRC(rc, 565)
+        AssertRC(rc, 582)
         BleHandle = nCtx
         Mode = 1
         dim UUID1$, UUID2$
         UUID1$ = BASEUUID
         UUID2$ = MIUUID
         rc = BLEGATTCFINDCHAR(nCtx, BleHandleUuid128(UUID1$), 0, BleHandleUuid128(UUID2$), 0)
-        AssertRC(rc, 572)
+        AssertRC(rc, 589)
         PRINT "Connected!\n"
         InConnection = 1
 

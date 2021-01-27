@@ -1,4 +1,4 @@
-// Copyright (c) 2013, Laird
+// Copyright (c) 2021, Laird Connectivity
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -37,7 +37,7 @@
 //     vst               - Add the VSPP uuid to the scan report
 //     ve nn             - Put nn bytes into transmit buffer and send
 //
-//     fg n              - Set advertising discoverability mode - n is 0 to 3 (see BLE_DISCOVERABILITY_xxx )
+//     fg n              - Set advertising discoverability mode - n is 0 to 3 (see BLE_DISCOVERABILITY_xxx)
 //     ai nnnn           - Set advertising interval in milliseconds
 //     at nnnn           - Set advertising timeout in milliseconds
 //     af n              - Set advertising filter policy 0..3 (see ADV_FILTERPOLICY_xx)
@@ -282,7 +282,7 @@
 #define BLE_EVBLEMSGID_ENCRYPTED                            18  //msgCtx = connection handle
 #define BLE_EVBLEMSGID_POWER_FAILURE_WARNING                19  //msgCtx = current supply voltage
 #define BLE_EVBLEMSGID_UNENCRYPTED                          20  //msgCtx = connection handle
-#define BLE_EVBLEMSGID_DEVICENAME_WRITE                     21  //msgCtx = connection handle 
+#define BLE_EVBLEMSGID_DEVICENAME_WRITE                     21  //msgCtx = connection handle
 
 //BLE Alert Levels
 #define BLE_ALERT_LEVEL_NO_ALERT                            0
@@ -534,7 +534,7 @@ function StopAdverts() as integer
   if advState != 0 then
     //Currently advertising
     rc = BleAdvertStop()
-    AssertRC(rc, 547)
+    AssertRC(rc, 537)
     if rc==0 then
       //Adverts stopped successfully
       advState=0
@@ -560,11 +560,11 @@ function StartAdverts(adv as integer) as integer
     elseif (adv<0)||(adv>3) then
       //Invalid advertising type
       rc=0xEF01
-      AssertRC(rc, 573)
+      AssertRC(rc, 563)
       exitfunc rc
     endif
     rc = BleAdvertStart(adv,addr$,advInt,advTmout,advFilPol)
-    AssertRC(rc, 577)
+    AssertRC(rc, 567)
     //
     //Warning: If you get an error here it is most likely that you
     //         have limited discoverability and the advert timeout is > 180000
@@ -577,7 +577,7 @@ function StartAdverts(adv as integer) as integer
   else
     //Currently advertising
     rc=0xEF00
-    AssertRC(rc, 590)
+    AssertRC(rc, 580)
   endif
 endfunc rc
 
@@ -595,7 +595,7 @@ sub AdvMngrOnBleMsg(BYVAL nMsgId AS INTEGER, BYVAL nCtx AS INTEGER)
   case BLE_EVBLEMSGID_DISCONNECT
     //Restart advertising
     rc=StartAdverts(-1)
-    AssertRC(rc, 608)
+    AssertRC(rc, 598)
 
   case else
     //Do nothing
@@ -642,19 +642,19 @@ sub InitAdvReports(advFlags as integer)
 
   //Create a minimal advertise report
   rc = BleAdvRptInit(adRpt$,advFlags,ADV_APPEARANCE,MAX_DEVNAME_CHRS)
-  AssertRC(rc, 655)
+  AssertRC(rc, 645)
 
   //Append the uuid list to the advert report
   rc = BleAdvRptAddUuid16(adRpt$,advUuid[0],advUuid[1],advUuid[2],advUuid[3],advUuid[4],advUuid[5])
-  AssertRC(rc, 659)
+  AssertRC(rc, 649)
 
   //Initialise an empty scan report
   rc = BleScanRptInit(scRpt$)
-  AssertRC(rc, 663)
+  AssertRC(rc, 653)
 
   //Commit the advert and scan report to the scan
   rc = BleAdvRptsCommit(adRpt$,scRpt$)
-  AssertRC(rc, 667)
+  AssertRC(rc, 657)
 
 endsub
 
@@ -663,7 +663,7 @@ endsub
 function ScanReportInit()
   dim rc
   rc = BleScanRptInit(scRpt$)
-  AssertRC(rc, 676)
+  AssertRC(rc, 666)
 endfunc rc
 
 //==============================================================================
@@ -671,7 +671,7 @@ endfunc rc
 function ScanReportAppend(nTag as integer, byref adData$ as string)
   dim rc
   rc = BleAdvRptAppendAD(scRpt$,nTag,adData$)
-  AssertRC(rc, 684)
+  AssertRC(rc, 674)
 endfunc rc
 
 //==============================================================================
@@ -680,7 +680,7 @@ function ScanReportCommit()
   dim rc,rpt$
   rpt$=""
   rc = BleAdvRptsCommit(rpt$,scRpt$)
-  AssertRC(rc, 693)
+  AssertRC(rc, 683)
 endfunc rc
 
 //==============================================================================
@@ -689,7 +689,7 @@ endfunc rc
 function Disconnect(hc as integer) as integer
   dim rc
   rc = BleDisconnect(hc)
-  AssertRC(rc, 702)
+  AssertRC(rc, 692)
 endfunc rc
 
 //==============================================================================
@@ -698,7 +698,7 @@ endfunc rc
 function ConnNewParms(hc as integer) as integer
   dim rc
   rc = BleSetCurConnParms(hc,minint,maxint,sprtout,slatncy)
-  AssertRC(rc, 711)
+  AssertRC(rc, 701)
 endfunc rc
 
 
@@ -724,7 +724,7 @@ function SecSendPassKey(hc as integer, byval ky as integer) as integer
   dim rc
   if hc != BLE_CONN_HANDLE_INVALID then
     rc = BleSecMngrPassKey(hc,ky)
-    AssertRC(rc, 737)
+    AssertRC(rc, 727)
   endif
 endfunc rc
 
@@ -733,7 +733,7 @@ endfunc rc
 function SecSetIoCap(ioCap as integer) as integer
   dim rc
   rc = BleSecMngrIocap(iocap)
-  AssertRC(rc, 746)
+  AssertRC(rc, 736)
 endfunc rc
 
 //==============================================================================
@@ -741,7 +741,7 @@ endfunc rc
 function SecSetLtkSizeRange(mnLtk as integer, mxLtk as integer) as integer
   dim rc
   rc = BleSecMngrKeySizes(mnLtk,mxLtk)
-  AssertRC(rc, 754)
+  AssertRC(rc, 744)
 endfunc rc
 
 //==============================================================================
@@ -757,7 +757,7 @@ endsub
 sub InitGapService()
   dim rc
   rc = BleGapSvcInit(DEVICENAME,DEVICENAME_WRITABLE,APPEARANCE,MIN_CONN_INTERVAL,MAX_CONN_INTERVAL,CONN_SUP_TIMEOUT,SLAVE_LATENCY)
-  AssertRC(rc, 770)
+  AssertRC(rc, 760)
 endsub
 
 //==============================================================================
@@ -775,7 +775,7 @@ sub InitDisService()
   if (rc==0) || (rc==RESCODE_BLE_SVC_REGISTERED) then
      AddUuid(UUID_DEVICE_INFORMATION_SERVICE)
   else
-    AssertRC(rc, 788)
+    AssertRC(rc, 778)
   endif
 
 endsub
@@ -841,7 +841,7 @@ endfunc rc
 sub SetDeviceName(st$ as string,wr as integer)
   dim rc
   rc = BleGapSvcInit(st$,wr,APPEARANCE,MIN_CONN_INTERVAL,MAX_CONN_INTERVAL,CONN_SUP_TIMEOUT,SLAVE_LATENCY)
-  AssertRC(rc, 854)
+  AssertRC(rc, 844)
   InitAdvReports(advFlags)
 endsub
 
@@ -874,7 +874,7 @@ sub ShowConnParms(nCtx as integer)
   dim rc
   dim intrvl,sprvto,slat
   rc= BleGetCurConnParms(nCtx,intrvl,sprvto,slat)
-  AssertRC(rc, 887)
+  AssertRC(rc, 877)
   if rc==0 then
     DbgMsgVal("Conn Interval",intrvl)
     DbgMsgVal("Conn Supervision Timeout",sprvto)
@@ -901,7 +901,7 @@ endfunc rc
 function VSppOpen()
   dim rc
   rc = BleVSpOpen(tsz,rsz,flgs,uuhdl)
-  AssertRC(rc, 914)
+  AssertRC(rc, 904)
   if rc==0 then
     print "\nBleVSppOpen() OK"
   endif
@@ -960,11 +960,11 @@ endfunc 0
 function VSppAdvert()
   dim rc,rpt$
   rc = BleAdvRptAddUuid128(scRpt$,uuhdl)
-  AssertRC(rc, 973)
+  AssertRC(rc, 963)
   if rc == 0 then
     rpt$=""
     rc = BleAdvRptsCommit(rpt$,scRpt$)
-    AssertRC(rc, 977)
+    AssertRC(rc, 967)
   endif
   if rc == 0 then
     print "\nVSPP added 128 uuid to scanrpt"
@@ -990,11 +990,11 @@ sub OnStartup()
 
   //Initialise VSP service
   //rc = VSppOpen()
-  //AssertRC(rc, 1003)
+  //AssertRC(rc, 993)
 
   //Add the VSP service to the scan report
   //rc = VSppAdvert()
-  //AssertRC(rc, 1007)
+  //AssertRC(rc, 997)
 
 endsub
 
@@ -1096,7 +1096,7 @@ function OnUartCmd(stData$,datalen) as integer
 
     elseif strcmp(stRS$,"ky ")==0 then
       vl = strvaldec(stData$)
-      DbgMsgVal( "Passkey : ",vl )
+      DbgMsgVal("Passkey : ",vl)
       rc = SecSendPassKey(hConn,vl)
 
     elseif strcmp(stRS$,"io ")==0 then
@@ -1145,7 +1145,7 @@ function OnUartCmd(stData$,datalen) as integer
 
     elseif ((AUTO_STARTUP & 1) == 0) && strcmp(stRS$,"ini")==0 then     //initapp
       OnStartup()
-      DbgMsg( "OnStartup() called" )
+      DbgMsg("OnStartup() called")
 
     //**************************************************************************
     else
@@ -1269,14 +1269,14 @@ function HandlerBlrAdvTimOut() as integer
 
   if AdvMngrOnAdvTimeOut() == 0 then
 
-    DbgMsg( "\nAdvert stopped via timeout" )
-    //DbgMsg( "\n   - could use SystemStateSet(0) to switch off" )
+    DbgMsg("\nAdvert stopped via timeout")
+    //DbgMsg("\n   - could use SystemStateSet(0) to switch off")
 
     //------------------------------------------------------------
     //  Switch off the system - requires a power cycle to recover
     //------------------------------------------------------------
     //  rc = SystemStateSet(0)
-    //  AssertRC(rc, 1280)
+    //  AssertRC(rc, 1279)
   endif
 
 endfunc 1

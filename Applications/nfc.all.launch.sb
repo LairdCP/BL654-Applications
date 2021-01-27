@@ -79,7 +79,7 @@ function NFC_AddWP(ndHandle, ByVal AppID$)
     dim Lang$ : Lang$ = ""
     dim Payload$ : Payload$ = "\00\01\0CWindowsPhone&{" + AppID$ + "}\00\01\20"
     rc = NfcNdefRecAddGeneric(ndHandle, 3, Type$, ID$, Lang$, 0xFFFFFFFF, Payload$)
-    AssertRC(rc, 84)
+    AssertRC(rc, 82)
 endfunc rc
 
 function NFC_AddAndroid(ndHandle, ByVal AppPackage$)
@@ -88,7 +88,7 @@ function NFC_AddAndroid(ndHandle, ByVal AppPackage$)
     dim ID$ : ID$= ""
     dim Lang$ : Lang$ = ""
     rc = NfcNdefRecAddGeneric(ndHandle, 4, Type$, ID$, Lang$, 0xFFFFFFFF, AppPackage$)
-    AssertRC(rc, 94)
+    AssertRC(rc, 91)
 endfunc rc
 
 function CompressURL$(URL$)
@@ -247,7 +247,7 @@ function NFC_AddURL(ndHandle, ByVal URL$)
 
     //Add URL
     rc = NfcNdefRecAddGeneric(ndHandle, 1, Type$, ID$, Lang$, 0xFFFFFFFF, URL$)
-    AssertRC(rc, 253)
+    AssertRC(rc, 250)
 endfunc rc
 
 function NFC_AddText(ndHandle, ByVal Text$)
@@ -257,7 +257,7 @@ function NFC_AddText(ndHandle, ByVal Text$)
     dim Lang$ : Lang$= " en" //This is the language code, change it to your desired language code if not using English text
     rc = strsetchr(Lang$, strlen(Lang$)-1, 0) //Prepend the language code length and sets encoding to UTF-8
     rc = NfcNdefRecAddGeneric(ndHandle, 1, Type$, ID$, Lang$, 0xFFFFFFFF, Text$)
-    AssertRC(rc, 263)
+    AssertRC(rc, 260)
 endfunc rc
 
 //******************************************************************************
@@ -275,15 +275,15 @@ OnEvent  EVNFC  call HandlerNfc
 
 //Enable NFC hardware interface, it already is, so will succeed
 rc = NfcHardwareState(0, 1)
-AssertRC(rc, 281)
+AssertRC(rc, 278)
 
 //Open NFC and return the handle
 rc = NfcOpen(0, "\00", nfcHandle)
-AssertRC(rc, 285)
+AssertRC(rc, 282)
 
 //Create a new NDEF message object that has a maximum size of 128 bytes
 rc = NfcNdefMsgNew(256, ndefHandle)
-AssertRC(rc, 289)
+AssertRC(rc, 286)
 
 //Add a windows phone launcher
 rc = NFC_AddWP(ndefHandle, "60332576-f8e3-4790-9677-9659bcde8a68")
@@ -305,11 +305,11 @@ endif
 
 //Commit the NDEF message to the stack
 rc = NfcNdefMsgCommit(nfcHandle,ndefHandle)
-AssertRC(rc, 311)
+AssertRC(rc, 308)
 
 //Enable field Sense
 rc = NfcFieldSense(nfcHandle,1)
-AssertRC(rc, 315)
+AssertRC(rc, 312)
 
 //------------------------------------------------------------------------------
 // Wait for an event.

@@ -51,6 +51,18 @@
 #define BLE_EVBLEMSGID_SERVICE_ERROR                    4 // msgCtx = resultcode
 #define BLE_EVBLEMSGID_NEW_BOND                        10 // msgCtx = connection handle
 
+// Metadata fields for BleExtRptMetadata()
+#define EXTRACT_METADATA_SET_ID                         1
+#define EXTRACT_METADATA_DATA_ID                        2
+#define EXTRACT_METADATA_PRIMARY_PHY                    3
+#define EXTRACT_METADATA_SECONDARY_PHY                  4
+#define EXTRACT_METADATA_CHANNEL_INDEX                  5
+#define EXTRACT_METADATA_TX_POWER                       6 // This field is set to 127 if the report does not contain the TxPower field
+#define EXTRACT_METADATA_STATUS                         7 // 0=Complete
+                                                          // 1=INCOMPLETE_MORE_DATA - More data to be received
+                                                          // 2=INCOMPLETE_TRUNCATED - Buffer size insufficient to receive more
+                                                          // 3=INCOMPLETE_MISSED    - Failed to receive the remaining data
+
 //******************************************************************************
 // Global Variable Declarations
 //******************************************************************************
@@ -87,23 +99,23 @@ endfunc 1
 sub PrintMetadata(metadata$)
     dim val, chnl, tmpVar$
 
-    val = BleExtRptMetadata(metadata$,1)
+    val = BleExtRptMetadata(metadata$,EXTRACT_METADATA_SET_ID)
     print "\n       :MD(sId=";val
 
-    val = BleExtRptMetadata(metadata$,2)
+    val = BleExtRptMetadata(metadata$,EXTRACT_METADATA_DATA_ID)
     sprint #tmpVar$, integer.h' val
     print " dId=";right$(tmpVar$,4)
 
-    priPhy = BleExtRptMetadata(metadata$,3)
+    priPhy = BleExtRptMetadata(metadata$,EXTRACT_METADATA_PRIMARY_PHY)
     print " pPhy=";priPhy
 
-    secPhy = BleExtRptMetadata(metadata$,4)
+    secPhy = BleExtRptMetadata(metadata$,EXTRACT_METADATA_SECONDARY_PHY)
     print " sPhy=";secPhy
 
-    chnl = BleExtRptMetadata(metadata$,5)
+    chnl = BleExtRptMetadata(metadata$,EXTRACT_METADATA_CHANNEL_INDEX)
     print " chn=";chnl
 
-    val = BleExtRptMetadata(metadata$,6)
+    val = BleExtRptMetadata(metadata$,EXTRACT_METADATA_TX_POWER)
     if chnl < 19 then
       print "  txp=";val;")"
     else
@@ -111,7 +123,7 @@ sub PrintMetadata(metadata$)
     endif
 
     //now print the status on a seperate line
-    val = BleExtRptMetadata(metadata$,7)
+    val = BleExtRptMetadata(metadata$,EXTRACT_METADATA_STATUS)
     print "\n       :MD(status=";val;")"
 endsub
 

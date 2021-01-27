@@ -30,7 +30,7 @@ function HandlerBleOverwriteBond(BYVAL Conn, BYVAL Flags, BYVAL Address$)
     dim rc
     print "\nBond overwritten, Handle: ";integer.h'Conn;", Flags: ";integer.h'Flags;", Address: ";strhexize$(Address$)
     rc = BleOverwriteBond(Conn, 1)
-    AssertRC(rc,33)
+    AssertRC(rc, 33)
 endfunc 1
 
 //==============================================================================
@@ -44,7 +44,7 @@ function HandlerBleMsg(BYVAL nMsgId AS INTEGER, BYVAL nCtx AS INTEGER) as intege
             print "\nDisconnected"
             rc = BleAdvertStart(0, pr$, 250, 0, 0)
             print "\nAdvertising to ";CENTRAL_ADDRESS
-            AssertRC(rc,47)
+            AssertRC(rc, 47)
         case BLE_EVBLEMSGID_NEW_BOND
             print "\nNew bond created"
         case BLE_EVBLEMSGID_UPDATED_BOND
@@ -66,7 +66,7 @@ OnEvent  EVBLE_ADV_TIMEOUT   call HndlrBlrAdvTimOut
 // Start adverts
 rc = BleAdvertStart(0, pr$, 250, 0, 0)
 print "\nAdverts started"
-AssertRC(rc,69)
+AssertRC(rc, 69)
 
 //Wait for an event
 WAITEVENT
