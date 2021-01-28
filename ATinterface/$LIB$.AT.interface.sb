@@ -1,5 +1,5 @@
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Copyright (c) 2020, Laird Connectivity                                     ++
+// Copyright (c) 2021, Laird Connectivity                                     ++
 //                                                                            ++
 // Permission to use, copy, modify, and/or distribute this software for any   ++
 // purpose with or without fee is hereby granted, provided that the above     ++
@@ -39,7 +39,7 @@
 // -------------------
 // ATinterface Library Version
 // -------------------
-#define LibVer                 "4.01"  //Library version  (ATI23)
+#define LibVer                 "4.02"  //Library version  (ATI23)
 //
 //******************************************************************************
 // Compiler/Debug options
@@ -78,6 +78,9 @@
 // -------------------
 // Application History
 // -------------------
+//
+//  4.02
+//    * Fixed issue with VSP modem changes not being sent when transmission buffers are full
 //
 //  4.01
 //    * Fixed issue with upper case characters not being made lower case properly
@@ -447,6 +450,10 @@
 #define VSP_OPEN_MITM_REQUIRED                      0xC
 #define VSP_OPEN_MITM_NOT_REQUIRED                  0x8
 
+#define VSP_MDM_FAIL_CACHE_DEASSERTED               0
+#define VSP_MDM_FAIL_CACHE_ASSERTED                 1
+#define VSP_MDM_FAIL_CACHE_NONE                     2
+
 //******************************************************************************
 // Global Variable Declarations
 //******************************************************************************
@@ -652,6 +659,9 @@ dim escnpfx$: escnpfx$ = "\nADS:"
 
 //Following is updated after a successive call of either BleAdvSetStart() or BleAdvertStart()
 dim fExtAdvertising : fExtAdvertising = FALSE
+
+//Following used to cache if a modem characteristic cannot be sent due to a full buffer
+dim vspMdmSendFail : vspMdmSendFail = VSP_MDM_FAIL_CACHE_NONE
 
 //******************************************************************************
 // Initialise Global Variable
@@ -2416,6 +2426,10 @@ sub VspMasterRtsSend(nState)
             rc = BleGattcWriteCmd(connHandles[HCONN_VSP], hVspAttr[VSP_ATTR_INDEX_MDMIN], tmpVar$)
             if rc == 0 then
                 vspAllowRx = nState
+                vspMdmSendFail = VSP_MDM_FAIL_CACHE_NONE
+            else
+                //Modem update failed, cached the value
+                vspMdmSendFail = nState
             endif
         endif
     endif
@@ -5028,6 +5042,11 @@ endfunc 1
 // UART data received in VSP fast connected state (as master)
 //------------------------------------------------------------------------------
 function HndlrUartRxVspOutFC()
+    //Check if there is a pending modem characteristic value that wasn't sent
+    if (vspMdmSendFail != VSP_MDM_FAIL_CACHE_NONE) then
+        VspMasterRtsSend(vspMdmSendFail)
+    endif
+
     //Read data that has arrived through via the UART
     if (vspAllowTx == 1) then
         do

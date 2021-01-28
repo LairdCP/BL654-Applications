@@ -1,5 +1,5 @@
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Copyright (c) 2020, Laird Connectivity                                     ++
+// Copyright (c) 2021, Laird Connectivity                                     ++
 //                                                                            ++
 // Permission to use, copy, modify, and/or distribute this software for any   ++
 // purpose with or without fee is hereby granted, provided that the above     ++
@@ -36,11 +36,14 @@
 // -------------------
 // Application Version
 // -------------------
-#define AppVer                 "4.01"  //Application version (ATI33)
+#define AppVer                 "4.02"  //Application version (ATI33)
 //
 // -------------------
 // Application History
 // -------------------
+//
+//  4.02
+//    Changed to use 244-byte maximum message length
 //
 //  4.01
 //    Fixed issue with upper case characters not being made lower case properly
@@ -90,7 +93,7 @@
 //The following can be modified by the customer to customise - but with care
 //==============================================================================
 //Maximum allowable size of strings (1024 maximum (for BL654)
-#define MaxCmdStringSize                          255
+#define MaxCmdStringSize                          244
 
 //Maximum allowable size of the advertised device name (additional characters will be clipped off)
 //Do NOT set larger than 20
