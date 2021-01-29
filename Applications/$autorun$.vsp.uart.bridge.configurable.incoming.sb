@@ -1,5 +1,5 @@
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Copyright (c) 2016, Laird                                                  ++
+// Copyright (c) 2016-2021, Laird Connectivity                                ++
 //                                                                            ++
 // Permission to use, copy, modify, and/or distribute this software for any   ++
 // purpose with or without fee is hereby granted, provided that the above     ++
@@ -391,13 +391,13 @@ endif
 //------------------------------------------------------------------------------
 sub NvFailure()
     //Non-volatile storage failure and application set to not continue when this is detected
-    #cmpif 0x00000001 : AssertRC(rc, 3550)
+    #cmpif 0x00000001 : AssertRC(rc, 394)
 
     //Enable LED2 flashing if set to do so
     rc = 0
     #cmpif 0x00000008 : rc = GPIOSetFunc(GPIOLED2Pin, 2, 3) //Set as frequency output
     #cmpif 0x00000008 : GPIOWrite(GPIOLED2Pin, 2)
-    #cmpif 0x00000001 : AssertRC(rc, 3610)
+    #cmpif 0x00000001 : AssertRC(rc, 400)
 endsub
 
 //------------------------------------------------------------------------------
@@ -409,7 +409,7 @@ endsub
 function ConfigKeyGetDef( keyID as integer) as integer
     dim defVal
     
-    #cmpif 0x00000001 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_NUM-1), 3730 )
+    #cmpif 0x00000001 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_NUM-1), 412)
     
     select keyID
     case VspTxBufConfigID
@@ -497,7 +497,7 @@ endfunc 1
 function ConfigKeyIsValid( keyID as integer, byref newVal as integer) as integer
     dim isValid
     
-    #cmpif 0x00000001 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_NUM-1), 4480 )
+    #cmpif 0x00000001 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_NUM-1), 500)
     
     select keyID
     case VspTxBufConfigID
@@ -615,7 +615,7 @@ endfunc 0
 //------------------------------------------------------------------------------
 sub ConfigKeyGetDef$( keyID as integer, byref defVal$ as string)
     
-    #cmpif 0x00000001 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_STR-1), 5550 )
+    #cmpif 0x00000001 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_STR-1), 618)
     
     select keyID
     case BaseUUIDConfigID
@@ -668,7 +668,7 @@ endfunc keyVal$
 function ConfigKey$IsValid( keyID as integer, newVal$ as string) as integer
     dim isValid, tmpStr1$, nlen
     
-    #cmpif 0x00000001 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_STR-1), 6000 )
+    #cmpif 0x00000001 : AssertBound(keyID, 0, (CONFIG_KEY_ID_MAX_STR-1), 671)
     
     isValid = 0 // assume invalid
     nlen = strlen(newVal$) //get length of new value
@@ -831,7 +831,7 @@ function OpenVSPService()
 
     //Open the VSP service with the provided configuration
     rc = BleVSPOpenEx(vspTxBufLen, vspRxBufLen, VspFlags, BaseUUID, RxUUID, TxUUID, ModemInUUID, ModemOutUUID)
-    #cmpif 0x00000001 : AssertRC(rc, 7680)
+    #cmpif 0x00000001 : AssertRC(rc, 834)
 endfunc 1
 
 //------------------------------------------------------------------------------
@@ -872,7 +872,7 @@ function SetupGAPService()
 
     //Initialise the GAP service with the connection interval data and device name
     rc = BleGapSvcInit(DevName$, 0, 0, MinCntInt, MaxCntInt, 4000000,  0)
-    #cmpif 0x00000001 : AssertRC(rc, 8220)
+    #cmpif 0x00000001 : AssertRC(rc, 875)
 
     //Read the advertising interval and check that the value is sane
     AdvInt = ConfigKeyGet( AdvIntConfigID)
@@ -886,13 +886,13 @@ sub CreateAdverts()
     //Add device name to advert report and service UUID to scan report
     dim advRpt$, scRpt$
     rc = BleAdvRptInit(advRpt$, 2, 0, MaxDevNameSize)
-    #cmpif 0x00000001 : AssertRC(rc, 8440)
+    #cmpif 0x00000001 : AssertRC(rc, 889)
     rc = BleScanRptInit(scRpt$)
-    #cmpif 0x00000001 : AssertRC(rc, 8460)
+    #cmpif 0x00000001 : AssertRC(rc, 891)
     rc = BleAdvRptAddUuid128(scRpt$, BaseUUID)
-    #cmpif 0x00000001 : AssertRC(rc, 8480)
+    #cmpif 0x00000001 : AssertRC(rc, 893)
     rc = BleAdvRptsCommit(advRpt$, scRpt$)
-    #cmpif 0x00000001 : AssertRC(rc, 8500)
+    #cmpif 0x00000001 : AssertRC(rc, 895)
 endsub
 
 //------------------------------------------------------------------------------
@@ -906,7 +906,7 @@ sub StartAdvertising()
 
         //Start advertising over BLE
         rc = BleAdvertStart(0, Addr$, AdvInt, 0, 0)
-        #cmpif 0x00000001 : AssertRC(rc, 8640)
+        #cmpif 0x00000001 : AssertRC(rc, 909)
     endif
 endsub
 
@@ -916,7 +916,7 @@ endsub
 #cmpif 0x80000000 : sub ShowConnParms(nCtx)
 #cmpif 0x80000000 :   dim intrvl,sprvto,slat
 #cmpif 0x80000000 :   rc = BleGetCurConnParms(nCtx,intrvl,sprvto,slat)
-#cmpif 0x80000001 :   AssertRC(rc, 8740)
+#cmpif 0x80000001 :   AssertRC(rc, 919)
 #cmpif 0x80000000 :   if rc==0 then
 #cmpif 0x80000000 :     print "\n## Conn :: Interval=";intrvl;",Supervision Tout=";sprvto;",Slave Latency=";slat
 #cmpif 0x80000000 :   endif
@@ -981,8 +981,6 @@ function HndlrBleMsg(nMsgId, nCtx)
             GPIOWrite(ENCRPin, 1)
         endif
         
-    #cmpif 0x80000000 : case BLE_EVBLEMSGID_DISPLAY_PASSKEY
-    #cmpif 0x80000000 :     DbgMsgVal("## Display Pairing Passkey ",nCtx)
 
     #cmpif 0x80000000 : case BLE_EVBLEMSGID_NEW_BOND
     #cmpif 0x80000000 :     DbgMsg("## New Bond")
@@ -992,9 +990,6 @@ function HndlrBleMsg(nMsgId, nCtx)
 
     #cmpif 0x80000000 : case BLE_EVBLEMSGID_CONN_TO_BONDED_MASTER
     #cmpif 0x80000000 :     DbgMsg("## Conn to Bonded Master ")
-
-    #cmpif 0x80000000 : case BLE_EVBLEMSGID_AUTH_KEY_REQUEST
-    #cmpif 0x80000000 :     DbgMsgVal("## Auth Key Request, type=",nCtx)
       
     #cmpif 0x80000000 : case BLE_EVBLEMSGID_CONN_PARMS_UPDATE
     #cmpif 0x80000000 :     ShowConnParms(nCtx)
@@ -1261,7 +1256,7 @@ function _client(byref bufferStr$)
     if (ConnectionID != 0) then
         //Connection: output address
         rc = BleGetAddrFromConnHandle(ConnectionID, tmpStr$)
-        #cmpif 0x00000001 : AssertRC(rc, 11420)
+        #cmpif 0x00000001 : AssertRC(rc, 1259)
         BufferStr$ = BufferStr$ + strhexize$(tmpStr$)
     else
         //No connection
@@ -1469,7 +1464,7 @@ endfunc 1
 sub SetupGPIOs()
     //Checks if mode should be application-based command mode or application-based bridge mode
     rc = GPIOSetFunc(AppModeGPIOPin, 1, AppModeGPIOPull)
-    #cmpif 0x00000001 : AssertRC(rc, 13480)
+    #cmpif 0x00000001 : AssertRC(rc, 1467)
     if (GPIORead(AppModeGPIOPin) == AppModeGPIOSetup) then
         //Set application to run in command mode
         AppMode = AppModeAppCmd
@@ -1486,7 +1481,7 @@ sub SetupGPIOs()
     //Setup LED1 as output if configured to be used as connection indicator
     rc = 0
     #cmpif 0x00000002 : rc = GPIOSetFunc(GPIOLED1Pin, 2, 0)
-    #cmpif 0x00000001 : AssertRC(rc, 13580)
+    #cmpif 0x00000001 : AssertRC(rc, 1484)
 
     //Set LED state if LED2 status is enabled
     rc = 0
@@ -1496,7 +1491,7 @@ sub SetupGPIOs()
     #cmpif 0x00000004 : else
     #cmpif 0x00000004 :     GPIOWrite(GPIOLED2Pin, 0)
     #cmpif 0x00000004 : endif
-    #cmpif 0x00000001 : AssertRC(rc, 13680)
+    #cmpif 0x00000001 : AssertRC(rc, 1494)
 
     //Determine which pins are to be used
     CONNPin = ConfigKeyGet( CONNPinConfigID)   
@@ -1505,12 +1500,12 @@ sub SetupGPIOs()
     //Setup CONN as output GPIO for connection status
     if CONNPin>= 0 then
         rc = GPIOSetFunc(CONNPin, 2, 0) //0 = initial is low, 1 = initial is high
-        #cmpif 0x00000001 : AssertRC(rc, 13720)
+        #cmpif 0x00000001 : AssertRC(rc, 1503)
     endif
     //Setup ENCR as output GPIO for connection encryption status
     if ENCRPin>= 0 then
         rc = GPIOSetFunc(ENCRPin, 2, 0) //0 = initial is low, 1 = initial is high
-        #cmpif 0x00000001 : AssertRC(rc, 13720)
+        #cmpif 0x00000001 : AssertRC(rc, 1508)
     endif
 endsub
 
@@ -1538,7 +1533,7 @@ function SetupUART()
 
     //Reopen the UART
     rc = UartOpen(UARTSpeed, UARTTxBuf, UARTRxBuf, UARTFlags$)
-    #cmpif 0x00000001 : AssertRC(rc, 14020)
+    #cmpif 0x00000001 : AssertRC(rc, 1536)
 endfunc 1
 
 //------------------------------------------------------------------------------
@@ -1554,7 +1549,7 @@ endfunc 1
 //==============================================================================
 // This handler is called when the BLE PHY is changed
 //==============================================================================
-function  HandlerPhyChngd(BYVAL hConn, BYVAL nStatus, BYVAL PhyTx, BYVAL PhyRx)
+function HandlerPhyChngd(BYVAL hConn, BYVAL nStatus, BYVAL PhyTx, BYVAL PhyRx)
     #cmpif 0x00000010 :print "BLE PHY CHANGED: \n"
     #cmpif 0x00000010 :print "Handle: ";integer.h' hConn;"\n"
     #cmpif 0x00000010 :print "Status: ";integer.h' nStatus;"\n"
@@ -1564,9 +1559,43 @@ endfunc 1
 //==============================================================================
 // This handler is called when there is a requiest for PHY change
 //==============================================================================
-function  HandlerPhyReq(BYVAL hConn, BYVAL PhyTx, BYVAL PhyRx)
+function HandlerPhyReq(BYVAL hConn, BYVAL PhyTx, BYVAL PhyRx)
     // Accept incoming PHY request by default
     rc = BlePhySet(hConn, PhyTx, PhyRx, 0)
+endfunc 1
+
+//==============================================================================
+// This handler is called when there is a passkey/numerical compare event
+//==============================================================================
+function HandlerBlePasskey(BYVAL Conn, BYVAL Passkey, BYVAL Flags)
+    #cmpif 0x80000000 : if (Flags == 0) then
+    #cmpif 0x80000000 :     //This is a passkey
+    #cmpif 0x80000000 :     PRINT "Pass Key Request (NOT Numerical Comparison), Handle: ";integer.h'Conn;", Key: ";Passkey;"\n"
+    #cmpif 0x80000000 : elseif (Flags == 1) then
+    #cmpif 0x80000000 :     //This is a numerical comparison
+    #cmpif 0x80000000 :     PRINT "Numerical Comparison Request (NOT Pass key), Handle: ";integer.h'Conn;", Key: ";Passkey;"\n"
+    #cmpif 0x80000000 : else
+    #cmpif 0x80000000 :     PRINT "Unknown Pass Key Request, Handle: ";integer.h'Conn;", Type: ";Flags;" Value: ";Passkey;"\n"
+    #cmpif 0x80000000 : endif
+endfunc 1
+
+//==============================================================================
+// This handler is called when there is an authkey request event
+//==============================================================================
+function HandlerBleAuthkey(BYVAL Conn, BYVAL Type, BYVAL Flags)
+    #cmpif 0x80000000 : PRINT "Auth Key Request, Handle: ";integer.h'Conn;", Type: ";Type;"\n"
+endfunc 1
+
+//==============================================================================
+// This handler is called when a device attempts to bond with a private
+// resolvable/non-resolvable address and overwrite an existing bond of a
+// public/random address
+//==============================================================================
+function HandlerBleOverwriteBond(BYVAL Conn, BYVAL Flags, BYVAL Address$)
+    //Note that this sample application will accept any bond overwrite as it is a sample application only. This behavior should not exist in real life/world applications
+    dim rc
+    #cmpif 0x80000000 : PRINT "Bond overwritten, Handle: ";integer.h'Conn;", Flags: ";integer.h'Flags;", Address: ";strhexize$(Address$);"\n"
+    rc = BleOverwriteBond(Conn, 1)
 endfunc 1
 
 //******************************************************************************
@@ -1595,6 +1624,8 @@ endif
 CreateAdverts()
 StartAdvertising()
 
+//Disable all pairing confirmation, this allows any device to bond even if an existing bond exists without confirmation as this is a sample application only. This behavior should not exist in real life/world applications
+rc = BleSecMngrPairConf(0)
 
 //******************************************************************************
 //Setup event handlers
@@ -1618,6 +1649,11 @@ endif
 ONEVENT EVTMR0             CALL HndlrTmr0         //disconnects
 ONEVENT EVBLE_PHY_UPDATED  CALL HandlerPhyChngd   //PHY changed
 ONEVENT EVBLE_PHY_REQUEST  CALL HandlerPhyReq     //PHY change request
+
+ONEVENT EVBLE_PASSKEY      CALL HandlerBlePasskey
+ONEVENT EVBLE_AUTHKEY      CALL HandlerBleAuthkey
+
+ONEVENT EVBLEOVERWRITEBOND CALL HandlerBleOverwriteBond
 
 //******************************************************************************
 //Wait in a lower-power mode for an event to occur
