@@ -295,7 +295,7 @@ rc = NFC_AddAndroid(ndefHandle, "com.lairdtech.lairdtoolkit")
 rc = NFC_AddText(ndefHandle, "NFC demo application on the Laird BL654 module")
 
 //Add a URL
-rc = NFC_AddURL(ndefHandle, "http://www.lairdtech.com")
+rc = NFC_AddURL(ndefHandle, "http://www.lairdconnect.com")
 
 //Inspect the status of the ndef message object
 rc = NfcNdefMsgGetInfo(ndefHandle,records,memTotal,memUsed)

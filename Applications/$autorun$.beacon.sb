@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Laird
+// Copyright (c) 2014-2021, Laird Connectivity
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -86,8 +86,8 @@
 #define EID                0x30
 
 //EddyStone UID NameSpace
-//First 10 bytes SHA-1 Hash Conversion of 'lairdtech.com'
-#define EDDY_NAMESPACE     "\A0\14\C1\89\8B\D7\AB\0A\56\B0"
+//First 10 bytes SHA-1 Hash Conversion of 'lairdconnect.com'
+#define EDDY_NAMESPACE     "\FA\6C\C1\DA\11\BF\F4\0D\2F\5B"
 
 //EddyStone UID Instance
 #define EDDY_INSTANCE      "\01\02\03\04\05\06"
@@ -123,7 +123,7 @@
 //======================================================//
 
 //EddyStone URL
-#define EDDY_URL           "lairdtech"
+#define EDDY_URL           "lairdconnect"
 
 //AD Record Tags    
 #define FLAGS              0x01
@@ -162,7 +162,7 @@
 #define SLAVE_LATENCY      5
 
 //Device Information Service info
-#define MANF_NAME          "Laird"
+#define MANF_NAME          "Laird Connectivity"
 #define MODEL              "Beacons"
 #define SERIAL_NUM         "1234"
 #define HW_REV             "1.0"
