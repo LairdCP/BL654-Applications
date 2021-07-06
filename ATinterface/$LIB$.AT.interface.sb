@@ -1770,7 +1770,7 @@ endsub
 // BLE advertising for central devices to connect to for VSP service
 //------------------------------------------------------------------------------
 sub IdleStartAdverts(advType, adIntervalMs)
-    rc = BleAdvertStart(advType, emptyAddr$, idleAdvIntvlMs , ADV_DURATION_FOREVER, ADV_FILTER_NONE)
+    rc = BleAdvertStart(advType, emptyAddr$, adIntervalMs , ADV_DURATION_FOREVER, ADV_FILTER_NONE)
     #cmpif 0x00000003 : AssertRC(1758)
     #cmpif 0x00000004 : DbgMsg("Idle Adverts Started")
     if rc == 0 then
