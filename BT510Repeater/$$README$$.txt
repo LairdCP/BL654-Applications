@@ -1,15 +1,15 @@
 --------
-Feb 2020
+Feb 2022
 --------
 
 This folder contains smartBASIC applications that when loaded in a BL654 
-module will expose an AT interface or act as a BT510 repeater or act as a
-BT510 gateway.
+module will expose an AT interface or act as a BT510/BT610 repeater or act as a
+BT510/BT610 gateway.
 
-The repeater functionality resends all BT510 adverts as new adverts.
+The repeater functionality resends all BT510/BT610 adverts as new adverts.
 S130=5
 
-The gateway functionality sends all BT510 advert data out via the uart 
+The gateway functionality sends all BT510/BT610 advert data out via the uart 
 (@ 115200,N,8,1)
 S130=3
 

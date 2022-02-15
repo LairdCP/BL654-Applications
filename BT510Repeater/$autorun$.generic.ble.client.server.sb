@@ -36,7 +36,7 @@
 // -------------------
 // Application Version
 // -------------------
-#define AppVer                 "1.03"  //Application version (ATI33)
+#define AppVer                 "1.04"  //Application version (ATI33)
 //
 // -------------------
 // Application History
@@ -138,4 +138,4 @@
 //******************************************************************************
 // Launch application
 //******************************************************************************
-#include "$LIB$.BT510.repeater.sb"
+#include "$LIB$.BTx10.repeater.sb"
