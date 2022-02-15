@@ -1,5 +1,5 @@
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Copyright (c) 2017, Laird                                                  ++
+// Copyright (c) 2017-2022, Laird Connectivity                                ++
 //                                                                            ++
 // Permission to use, copy, modify, and/or distribute this software for any   ++
 // purpose with or without fee is hereby granted, provided that the above     ++
@@ -38,6 +38,9 @@
 // -------------------
 // Application History
 // -------------------
+//
+//  1.04
+//    Add support for BT610
 //
 //  1.03
 //    Fix bug in queing subsystem
@@ -111,7 +114,7 @@
 #define SREGINIT_MIN8_0  "\00\D8\00\00\00\01\01\FC\00\FF\01\03\00\88\01\07\00\FF\01\80"
 #define SREGINIT_MAX8_0  "\7F\08\03\07\7F\1F\7F\04\03\2F\78\10\01\EC\14\10\01\2F\30\7F"
 //                  120+    0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
-#define SREGINIT_VAL8_1  "\00\00\00\00\00\01\08\00\00\00\01\01\04\14\14\05\01\00\1D\1E"
+#define SREGINIT_VAL8_1  "\00\00\00\00\00\01\08\00\00\00\01\01\04\14\14\03\01\00\1D\1E"
 #define SREGINIT_MIN8_1  "\80\80\80\80\80\00\01\80\80\80\00\01\01\14\00\00\01\80\FF\FF"
 #define SREGINIT_MAX8_1  "\7F\7F\7F\7F\7F\01\0F\7F\7F\7F\7F\30\30\64\64\0F\30\7F\1F\1F"
 //                  200+    0     1     2     3     4     5     6     7    8     9

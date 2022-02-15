@@ -1,5 +1,5 @@
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Copyright (c) 2017, Laird                                                  ++
+// Copyright (c) 2017-2022, Laird Connectivity                                ++
 //                                                                            ++
 // Permission to use, copy, modify, and/or distribute this software for any   ++
 // purpose with or without fee is hereby granted, provided that the above     ++
@@ -39,6 +39,9 @@
 // Application History
 // -------------------
 //
+//  1.04
+//    Add support for BT610
+//
 //  1.03
 //    Fix bug in queing subsystem
 //
@@ -51,7 +54,7 @@
 // Compiler/Debug options
 //******************************************************************************
 //The following is the 'as-deployed' to customer setting
-#set $cmpif, 0x00963000 //see $LIB$.AT.interface.sb for bitmask description
+#set $cmpif, 0x00960000 //see $LIB$.AT.interface.sb for bitmask description
 
 //******************************************************************************
 // Definitions
