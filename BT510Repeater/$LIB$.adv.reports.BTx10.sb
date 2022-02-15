@@ -278,7 +278,7 @@ endfunc 0
 //   nRssi       : rssi of the report
 //------------------------------------------------------------------------------
 sub ProcessAdvReport( fLongRange )
-//Check for 1st manufacturer specific AD element tag
+  //Check for 1st manufacturer specific AD element tag
   rc=BleGetADbyTag(advData$,AD_TAG_MANUF,adelem$)
   if rc!=0 then
     exitsub
