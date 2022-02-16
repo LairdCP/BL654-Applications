@@ -29,7 +29,7 @@ S130=0
 The folder contains many smartBASIC source code files which end with the
 extension ".sb"
 
-For BL654, use with file "$autorun$.BTx10.repeater.BL654.sb"
+For BL654, use with file "$autorun$.BTx.repeater.BL654.sb"
 
 An application is downloaded to a module using a free Laird utility called
 UwTerminalX. You can download the utility from ...

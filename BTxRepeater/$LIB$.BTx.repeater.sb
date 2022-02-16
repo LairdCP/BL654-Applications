@@ -375,10 +375,10 @@
 #define NORDICERROR_INVALID_DATA                  0x620B
 #define NORDICERROR_INVALID_DATA_SIZE             0x620C
 
-#define BTx10_RPTR_ENABLED                        0x01
-#define BTx10_RPTR_GATEWAY_MODE                   0x02
-#define BTx10_RPTR_CONV1MPHY_TO_LECODED           0x04
-#define BTx10_RPTR_GATEWAY_MODE_PARSED            0x08
+#define BTx_RPTR_ENABLED                          0x01
+#define BTx_RPTR_GATEWAY_MODE                     0x02
+#define BTx_RPTR_CONV1MPHY_TO_LECODED             0x04
+#define BTx_RPTR_GATEWAY_MODE_PARSED              0x08
 
 //******************************************************************************
 // Global Variable Declarations
@@ -4402,16 +4402,16 @@ sub Startup()
 
   //get startup flags
   rptrModeFlags=SRegGet(CfgId_RepeaterModeFlags)
-  if rptrModeFlags & BTx10_RPTR_ENABLED then
+  if rptrModeFlags & BTx_RPTR_ENABLED then
     //on reset start scanning with no timeout
     startflags=0x04
     //check if in gateway mode so that packets are sent out via uart instead of on-air
-    if rptrModeFlags & BTx10_RPTR_GATEWAY_MODE then
+    if rptrModeFlags & BTx_RPTR_GATEWAY_MODE then
       fGatewayMode=1
     else
       fRepeaterMode=1
     endif
-    if rptrModeFlags & BTx10_RPTR_CONV1MPHY_TO_LECODED then
+    if rptrModeFlags & BTx_RPTR_CONV1MPHY_TO_LECODED then
       fPromote1MPhy=1
     endif
   else
@@ -4639,7 +4639,7 @@ endfunc 1
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 #include "$LIB$.adv.reports.atfunc.sb"   //Functions as per ATapp functionality
-#include "$LIB$.adv.reports.BTx10.sb"    //Functions as per Repeater or Gateway
+#include "$LIB$.adv.reports.BTx.sb"    //Functions as per Repeater or Gateway
 
 //------------------------------------------------------------------------------
 //Disconnect
@@ -5477,7 +5477,7 @@ OnEvent EVBLE_PHY_UPDATED       call HandlerPhyUpdated
 //******************************************************************************
 
 Startup()
-if rptrModeFlags & BTx10_RPTR_ENABLED then
+if rptrModeFlags & BTx_RPTR_ENABLED then
 
   //Operating in repeater or gateway mode
   RepeaterStartup()

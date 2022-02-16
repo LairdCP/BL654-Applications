@@ -17,7 +17,7 @@
 //                                                                            ++
 // ************************************************************************** ++
 // A smartBASIC application that exposes an AT Interface and will scan for    ++
-// adverts from BLx10 sensors and other repeaters and rebroadcast to so that  ++
+// adverts from BTx sensors and other repeaters and rebroadcast to so that    ++
 // those adverts are transmitted as a hex string over the the uart interface  ++
 // so that a uart host can act as a gateway for the advert information to the ++
 // internet cloud.                                                            ++
@@ -59,7 +59,7 @@
 // Compiler/Debug options
 //******************************************************************************
 //The following is the 'as-deployed' to customer setting
-#set $cmpif, 0x00960000 //see $LIB$.AT.interface.sb for bitmask description
+#set $cmpif, 0x0096100F //see $LIB$.AT.interface.sb for bitmask description
 
 //******************************************************************************
 // Definitions
@@ -143,4 +143,4 @@
 //******************************************************************************
 // Launch application
 //******************************************************************************
-#include "$LIB$.BTx10.repeater.sb"
+#include "$LIB$.BTx.repeater.sb"

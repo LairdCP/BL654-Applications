@@ -3,7 +3,7 @@
 //#############################################################################
 //
 // This file contains code that processes adverts to check if they are from
-// BTx10s so that they can be repeated
+// BTx's so that they can be repeated
 //
 //******************************************************************************
 // Definitions
@@ -45,12 +45,12 @@
 
 #define MAX_HOPS_DEFAULT                  1
 
-#define BTx10_PACKET_1MPHY                0
-#define BTx10_PACKET_LECODED              1
-#define BTx10_REPEATED_PACKET_1MPHY       2
-#define BTx10_REPEATED_PACKET_LECODED     3
+#define BTx_PACKET_1MPHY                  0
+#define BTx_PACKET_LECODED                1
+#define BTx_REPEATED_PACKET_1MPHY         2
+#define BTx_REPEATED_PACKET_LECODED       3
 
-#define PKT_SOURCE_BTx10                  0
+#define PKT_SOURCE_BTx                    0
 #define PKT_SOURCE_REPEATER               1
 
 //******************************************************************************
@@ -76,7 +76,7 @@ dim nQueHead  : nQueHead=0
 dim nQueTail  : nQueTail=0
 dim queAdvRpt$[ADV_QUE_LEN]
 dim queType[ADV_QUE_LEN]
-dim queRepeats[ADV_QUE_LEN]  //Packet Source 0= from BTx10, 1=Repeater
+dim queRepeats[ADV_QUE_LEN]  //Packet Source 0= from BTx, 1=Repeater
 dim empScnRpt$        //will always contain an empty scan report
 dim nAdvTxRptS     //number of times an incoming advert is sent when from sensor
 dim nAdvTxRptR     //number of times an incoming advert is sent when from repeater
@@ -84,7 +84,7 @@ dim nAdvIntMs         //advert interval for repeats
 dim postRepeatIdleMs  //time in msec to wait after a repeated advert has been sent
 dim nameTag,asName$   //cache for device name AD element in 510 advert
 dim rptPfx$[4] :      //prefix for adverts sent to gateway
-dim pktSrc           //Packet Source 0= from BTx10, 1=Repeater
+dim pktSrc           //Packet Source 0= from BTx, 1=Repeater
 dim pfxId            //used in gateway mode to determine the prefix for each report to gateway
 
 //******************************************************************************
@@ -96,7 +96,7 @@ dim pfxId            //used in gateway mode to determine the prefix for each rep
 sub RepeaterStartup()
 
   //create the repeat header that will be prepended to an advert that comes direct
-  //from a BTx10
+  //from a BTx
   hdrRepeatR$="\03\00\01"  //See HDRPRT_XXXX and must be HDRRPT_TOTAL_LENGTH bytes long
   dontcare=SRegGet(CfgId_MaxHopsTTL)
   rc=StrSetChr(hdrRepeatR$,dontcare,HDRPRT_HOP_MAXCOUNT)
@@ -118,10 +118,10 @@ sub RepeaterStartup()
   nAdvIntMs        = SRegGet(CfgId_RepeatAdvertIntervalMs) //if echoed packed sent multiple times, then interval inbetween
   postRepeatIdleMs = SRegGet(CfgId_PostAdvertRepeatIdleMs) //Idle time after the last echoed transmission
 
-  rptPfx$[0]="\nBS1:"  //1MPHY packet                  BTx10_PACKET_1MPHY
-  rptPfx$[1]="\nBS4:"  //LE_CODED packet               BTx10_PACKET_LECODED
-  rptPfx$[2]="\nBR1:"  //Repeated packet on 1MPHY      BTx10_REPEATED_PACKET_1MPHY
-  rptPfx$[3]="\nBR4:"  //Repeated packet on LECODED    BTx10_REPEATED_PACKET_LECODED
+  rptPfx$[0]="\nBS1:"  //1MPHY packet                  BTx_PACKET_1MPHY
+  rptPfx$[1]="\nBS4:"  //LE_CODED packet               BTx_PACKET_LECODED
+  rptPfx$[2]="\nBR1:"  //Repeated packet on 1MPHY      BTx_REPEATED_PACKET_1MPHY
+  rptPfx$[3]="\nBR4:"  //Repeated packet on LECODED    BTx_REPEATED_PACKET_LECODED
 
 endsub
 
@@ -181,7 +181,7 @@ endsub
 //------------------------------------------------------------------------------
 sub PushAdvertToQue(advRpt$,fLongRange,srcPkt)
 
-  if srcPkt==PKT_SOURCE_BTx10 then
+  if srcPkt==PKT_SOURCE_BTx then
     tmpRptCnt = nAdvTxRptS
   else
     tmpRptCnt = nAdvTxRptR
@@ -213,7 +213,7 @@ dim nb,tmpA,tmpB,tmpA$
 //------------------------------------------------------------------------------
 sub PushAdvertToUart(advRpt$,pfxId,rssi)
   print rptPfx$[pfxId];StrHexize$(advRpt$);" ";rssi
-  if rptrModeFlags & BTx10_RPTR_GATEWAY_MODE_PARSED then
+  if rptrModeFlags & BTx_RPTR_GATEWAY_MODE_PARSED then
 
     nb=StrDecodeSTRING(advRpt$,14,tmpA$,6) : print "\n## BdAddr=";strhexize$(tmpA$)
     nb=StrDecodeU8(advRpt$,tmpA,8) : nb=StrDecodeU8(advRpt$,tmpB,9)
@@ -271,7 +271,7 @@ function IsAdTagName()
 endfunc 0
 
 //------------------------------------------------------------------------------
-// Helper routine to process the BTx10 adverts
+// Helper routine to process the BTx adverts
 // On entry the following global variables contain information
 //   advData$    : advert data
 //   periphAddr$ : the address of the report sender
@@ -289,7 +289,7 @@ sub ProcessAdvReport( fLongRange )
   select rc
   case PROTID_0077_0001
     //#cmpif 0x00001000 : print "\n## found PROTID_0077_0001"
-    //#cmpif 0x00001000 : print "\n## BTx10 Adv: ";strhexize$(advData$)
+    //#cmpif 0x00001000 : print "\n## BTx Adv: ";strhexize$(advData$)
     //#cmpif 0x00001000 : print "\n##    adelem: ";strhexize$(adelem$)
     //strip companyid and protocolid
     tmpFrag1$=mid$(adelem$,COMPANYID_PROTID_LEN,65535)
@@ -325,12 +325,12 @@ sub ProcessAdvReport( fLongRange )
       //not found 4th AD element and if found then it is not a device name tag
       exitsub
     endif
-    pktSrc=PKT_SOURCE_BTx10
+    pktSrc=PKT_SOURCE_BTx
 
 
   case PROTID_0077_0002
     //#cmpif 0x00001000 : print "\n## found PROTID_0077_0002"
-    //#cmpif 0x00001000 : print "\n## BTx10 Adv: ";strhexize$(advData$)
+    //#cmpif 0x00001000 : print "\n## BTx Adv: ";strhexize$(advData$)
     //strip companyid and protocolid
     tmpAdvR$=mid$(adelem$,COMPANYID_PROTID_LEN,65535)
     if fGatewayMode then
@@ -346,14 +346,14 @@ sub ProcessAdvReport( fLongRange )
       //not found 4th AD element and if found then it is not a device name tag
       exitsub
     endif
-    pktSrc=PKT_SOURCE_BTx10
+    pktSrc=PKT_SOURCE_BTx
 
   case PROTID_0077_000R
     //#cmpif 0x00001000 : print "\n## found PROTID_0077_000R"
-    //#cmpif 0x00001000 : print "\n## BTx10 Adv: ";strhexize$(advData$)
+    //#cmpif 0x00001000 : print "\n## BTx Adv: ";strhexize$(advData$)
     //strip companyid and protocolid
     tmpAdvR$=mid$(adelem$,COMPANYID_PROTID_LEN,65535)
-    //now we have the repeat header & the BTx10 content so get the current hop count
+    //now we have the repeat header & the BTx content so get the current hop count
     tmpRptCnt=StrGetChr(tmpAdvR$,HDRPRT_HOP_COUNT)
     //abort if less than 1
     if tmpRptCnt<1 then
@@ -399,24 +399,24 @@ sub ProcessAdvReport( fLongRange )
   if fGatewayMode then
     //Gateway Mode send the advert out via the uart
     //Determine the prefix to send
-    if pktSrc==PKT_SOURCE_BTx10 then
+    if pktSrc==PKT_SOURCE_BTx then
       if fLongRange then
-        pfxId=BTx10_PACKET_LECODED
+        pfxId=BTx_PACKET_LECODED
       else
-        pfxId=BTx10_PACKET_1MPHY
+        pfxId=BTx_PACKET_1MPHY
       endif
     else
       if fLongRange then
-        pfxId=BTx10_REPEATED_PACKET_LECODED
+        pfxId=BTx_REPEATED_PACKET_LECODED
       else
-        pfxId=BTx10_REPEATED_PACKET_1MPHY
+        pfxId=BTx_REPEATED_PACKET_1MPHY
       endif
     endif
     //send via uart
     PushAdvertToUart(tmpAdvRpt$,pfxId,nRssi)
   else
     //add this new advert to the queue
-    #cmpif 0x00001000 : print "\n## BTx10 Adv: ";strhexize$(tmpAdvRpt$);" ";nRssi
+    #cmpif 0x00001000 : print "\n## BTx Adv: ";strhexize$(tmpAdvRpt$);" ";nRssi
     PushAdvertToQue(tmpAdvRpt$,fLongRange,pktSrc)
   endif
 
@@ -456,7 +456,7 @@ endfunc 1
 //------------------------------------------------------------------------------
 function HndlrExtScnRpt510(byval ad$,byval dta$,rsi,byval metadata$)
   //----------------------------------------
-  //BTx10 never sends extended scan reports
+  //BTx never sends extended scan reports
   //----------------------------------------
   //advData$=dta$ : periphAddr$=ad$ : nRssi=rsi
   //ProcessAdvReport()

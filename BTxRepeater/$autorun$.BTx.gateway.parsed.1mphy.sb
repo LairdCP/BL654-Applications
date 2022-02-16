@@ -17,8 +17,13 @@
 //                                                                            ++
 // ************************************************************************** ++
 // A smartBASIC application that exposes an AT Interface and will scan for    ++
-// adverts from BLx10 sensors and other repeaters and rebroadcast to range    ++
-// extend                                                                     ++
+// adverts from BTx sensors and other repeaters and rebroadcast to so that    ++
+// those adverts are transmitted as a hex string over the the uart interface  ++
+// so that a uart host can act as a gateway for the advert information to the ++
+// internet cloud.                                                            ++
+// In addition, when an advert is sent over the uart, additional verbose      ++
+// information is also sent which is basically the fields in the advert       ++
+// printed in a human readable format                                         ++
 // ************************************************************************** ++
 //                                                                            ++
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -54,7 +59,7 @@
 // Compiler/Debug options
 //******************************************************************************
 //The following is the 'as-deployed' to customer setting
-#set $cmpif, 0x00963000 //see $LIB$.AT.interface.sb for bitmask description
+#set $cmpif, 0x00960000 //see $LIB$.AT.interface.sb for bitmask description
 
 //******************************************************************************
 // Definitions
@@ -114,7 +119,7 @@
 #define SREGINIT_MIN8_0  "\00\D8\00\00\00\01\01\FC\00\FF\01\03\00\88\01\07\00\FF\01\80"
 #define SREGINIT_MAX8_0  "\7F\08\03\07\7F\1F\7F\04\03\2F\78\10\01\EC\14\10\01\2F\30\7F"
 //                  120+    0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
-#define SREGINIT_VAL8_1  "\00\00\00\00\00\01\08\00\00\00\01\01\04\14\14\05\01\00\1D\1E"
+#define SREGINIT_VAL8_1  "\00\00\00\00\00\01\08\00\00\00\0B\01\04\14\14\05\01\00\1D\1E"
 #define SREGINIT_MIN8_1  "\80\80\80\80\80\00\01\80\80\80\00\01\01\14\00\00\01\80\FF\FF"
 #define SREGINIT_MAX8_1  "\7F\7F\7F\7F\7F\01\0F\7F\7F\7F\7F\30\30\64\64\0F\30\7F\1F\1F"
 //                  200+    0     1     2     3     4     5     6     7    8     9
@@ -138,4 +143,4 @@
 //******************************************************************************
 // Launch application
 //******************************************************************************
-#include "$LIB$.BTx10.repeater.sb"
+#include "$LIB$.BTx.repeater.sb"
