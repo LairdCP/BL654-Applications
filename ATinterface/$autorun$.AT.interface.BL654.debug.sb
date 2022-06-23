@@ -1,5 +1,5 @@
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Copyright (c) 2021, Laird Connectivity                                     ++
+// Copyright (c) 2021-2022, Laird Connectivity                                ++
 //                                                                            ++
 // Permission to use, copy, modify, and/or distribute this software for any   ++
 // purpose with or without fee is hereby granted, provided that the above     ++
@@ -36,11 +36,14 @@
 // -------------------
 // Application Version
 // -------------------
-#define AppVer                 "4.02"  //Application version (ATI33)
+#define AppVer                 "4.03"  //Application version (ATI33)
 //
 // -------------------
 // Application History
 // -------------------
+//
+//  4.03
+//    Changed to use 160-byte maximum attribute size by default
 //
 //  4.02
 //    Changed to use 244-byte maximum message length

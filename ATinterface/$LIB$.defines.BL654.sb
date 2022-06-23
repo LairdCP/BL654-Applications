@@ -23,7 +23,7 @@
 #define MAX_SIO_NUM                               47
 
 //This defines the maximum size of characteristics we can manage
-#define DEFAULT_DLE_ATTRIBUTE_SIZE                96
+#define DEFAULT_DLE_ATTRIBUTE_SIZE                160
 
 //Max/Default connections allowed by role
 #define MAX_CONNECTIONS_AS_SLAVE                  1

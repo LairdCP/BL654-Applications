@@ -1,5 +1,5 @@
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Copyright (c) 2021, Laird Connectivity                                     ++
+// Copyright (c) 2021-2022, Laird Connectivity                                ++
 //                                                                            ++
 // Permission to use, copy, modify, and/or distribute this software for any   ++
 // purpose with or without fee is hereby granted, provided that the above     ++
@@ -37,11 +37,14 @@
 // -------------------
 // Application Version
 // -------------------
-#define AppVer                 "4.02"  //Application version (ATI33)
+#define AppVer                 "4.03"  //Application version (ATI33)
 //
 // -------------------
 // Application History
 // -------------------
+//
+//  4.03
+//    Changed to use 160-byte maximum attribute size by default
 //
 //  4.02
 //    Changed to use 244-byte maximum message length
@@ -148,7 +151,7 @@
 #define SREGINIT_MIN16_0 "\E8\03\14\00\00\00\00\00\00\01\00\01\64\00\00\00\14\00\00\01"
 #define SREGINIT_MAX16_0 "\20\4E\00\28\00\20\00\20\00\40\00\40\00\7D\FF\7F\00\28\00\08"
 //                  210+    0     1     2     3     4     5     6     7    8     9
-#define SREGINIT_VAL16_1 "\FA\00\50\00\28\00\88\13\00\00\00\00\00\00\00\00\00\00\60\00"
+#define SREGINIT_VAL16_1 "\FA\00\50\00\28\00\88\13\00\00\00\00\00\00\00\00\00\00\A0\00"
 #define SREGINIT_MIN16_1 "\32\00\28\00\28\00\FA\00\00\80\00\80\00\80\00\80\00\80\14\00"
 #define SREGINIT_MAX16_1 "\D0\07\00\28\00\28\30\75\FF\7F\FF\7F\FF\7F\FF\7F\FF\7F\F4\00"
 //                  300+    0           1           2           3          4
