@@ -36,11 +36,14 @@
 // -------------------
 // Application Version
 // -------------------
-#define AppVer                 "4.03"  //Application version (ATI33)
+#define AppVer                 "4.04"  //Application version (ATI33)
 //
 // -------------------
 // Application History
 // -------------------
+//
+//  4.04
+//    Changed default and min/max values for S regs 137/138/139
 //
 //  4.03
 //    Changed to use 160-byte maximum attribute size by default
@@ -143,15 +146,15 @@
 #define SREGINIT_MIN8_0  "\00\D8\00\00\00\01\01\FC\00\FF\01\03\00\88\01\07\00\FF\01\80"
 #define SREGINIT_MAX8_0  "\7F\12\03\07\7F\1F\7F\04\03\2F\78\10\01\EC\14\10\01\2F\30\7F"
 //                  120+    0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9
-#define SREGINIT_VAL8_1  "\00\00\00\00\00\01\08\06\00\00\00\00\00\00\00\00\00\00\1D\1E"
-#define SREGINIT_MIN8_1  "\80\80\80\80\80\00\01\01\80\80\80\80\80\80\80\80\80\80\FF\FF"
-#define SREGINIT_MAX8_1  "\7F\7F\7F\7F\7F\01\0F\06\7F\7F\7F\7F\7F\7F\7F\7F\7F\7F\1F\1F"
+#define SREGINIT_VAL8_1  "\00\00\00\00\00\01\08\06\00\00\00\00\00\00\00\00\00\03\FF\FF"
+#define SREGINIT_MIN8_1  "\80\80\80\80\80\00\01\01\80\80\80\80\80\80\80\80\80\00\FF\FF"
+#define SREGINIT_MAX8_1  "\7F\7F\7F\7F\7F\01\0F\06\7F\7F\7F\7F\7F\7F\7F\7F\7F\03\2F\2F"
 //                  200+    0     1     2     3     4     5     6     7    8     9
 #define SREGINIT_VAL16_0 "\40\1F\FA\00\00\04\00\04\00\10\00\10\70\17\00\00\FA\00\00\02"
 #define SREGINIT_MIN16_0 "\E8\03\14\00\00\00\00\00\00\01\00\01\64\00\00\00\14\00\00\01"
 #define SREGINIT_MAX16_0 "\20\4E\00\28\00\20\00\20\00\40\00\40\00\7D\FF\7F\00\28\00\08"
 //                  210+    0     1     2     3     4     5     6     7    8     9
-#define SREGINIT_VAL16_1 "\FA\00\50\00\28\00\88\13\00\00\00\00\00\00\00\00\00\00\60\00"
+#define SREGINIT_VAL16_1 "\FA\00\50\00\28\00\88\13\00\00\00\00\00\00\00\00\00\00\A0\00"
 #define SREGINIT_MIN16_1 "\32\00\28\00\28\00\FA\00\00\80\00\80\00\80\00\80\00\80\14\00"
 #define SREGINIT_MAX16_1 "\D0\07\00\28\00\28\30\75\FF\7F\FF\7F\FF\7F\FF\7F\FF\7F\F4\00"
 //                  300+    0           1           2           3          4

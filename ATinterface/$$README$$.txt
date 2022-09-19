@@ -14,7 +14,7 @@ if there was a wired uart connection.
      ==============================================================
      The minimum firmware version that you will need is as follows:
      
-                             BL652 : N/A (next release)
+                             BL652 : v28.11.8.0
                              BL653 : v30.2.3.0
                              BL654 : v29.5.7.2
           
