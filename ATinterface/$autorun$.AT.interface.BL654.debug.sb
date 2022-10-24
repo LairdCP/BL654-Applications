@@ -36,11 +36,14 @@
 // -------------------
 // Application Version
 // -------------------
-#define AppVer                 "4.04"  //Application version (ATI33)
+#define AppVer                 "4.05"  //Application version (ATI33)
 //
 // -------------------
 // Application History
 // -------------------
+//
+//  4.05
+//    Changed MAX_CONNECTIONS to 16 as the BL654 can handle up to 16 concurrent connections
 //
 //  4.04
 //    Changed default and min/max values for S regs 137/138/139
@@ -115,8 +118,8 @@
 #define MAX_CHARACTERISTICS                       24
 
 //This defines the maximum number of connections
-//Valid range 2..8
-#define MAX_CONNECTIONS                           8
+//Valid range 2..16
+#define MAX_CONNECTIONS                           16
 
 //Scanning bitmasks
 #define SCANTYPE_VSP_MODE                        (SCANTYPE_1MPHY+SCANTYPE_LECODED)
